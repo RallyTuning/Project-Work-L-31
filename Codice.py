@@ -1,6 +1,9 @@
 import random
 import json
 
+# Esempio di stringa JSON in ingresso (simulazione richiesta dal frontend web)
+strjson = '[ { "id": "L01", "cultivar": "Barbera", "n_piante": 1000, "ettari": 0.7, "config": { "cap_giornaliera": 40.0, "tempo_unitario": 0.5, "concime": "Urea", "trattamento": "Poltiglia Bordolese" } }, { "id": "L02", "cultivar": "Aglianico", "n_piante": 1200, "ettari": 0.6, "config": { "cap_giornaliera": 20.0, "tempo_unitario": 0.6, "concime": "Nessuno", "trattamento": "Zolfo" } }, { "id": "L03", "cultivar": "Moscato", "n_piante": 500, "ettari": 0.3, "config": { "cap_giornaliera": 60.0, "tempo_unitario": 0.3, "concime": "Zolfato", "trattamento": "Nessuno" } }]'
+
 # --- MODULO SIMULAZIONE SENSORISTICA (IoT) ---
 def ottieni_dati_meteo_iot():
     """
@@ -131,7 +134,7 @@ class SimulatoreLottoVigneto:
             }
         }
 
-# --- CONTROLLER PRINCIPALE (Backend Logic) ---
+# --- CONTROLLER PRINCIPALE (Con polimorfismo di risposta) ---
 def main_controller(modalita_input, json_data=None):
     """
     Funzione di ingresso del programma. Gestisce il flusso in base alla sorgente della richiesta.
@@ -143,24 +146,55 @@ def main_controller(modalita_input, json_data=None):
     
     lista_lotti = []
 
-    # Inizializzo gli oggetti. In un'applicazione reale, questi dati verrebbero
-    # istanziati parsando il 'json_data' in ingresso (Deserializzazione).
-    # Per questo prototipo, uso i dati reali della mia azienda 'Timpe Smart Vineyard'.
+    # --- FASE 1: INIZIALIZZAZIONE DATI (Il Flusso Mancante!) ---
     
-    # Configurazione Lotto 1: Barbera
-    l1 = SimulatoreLottoVigneto("L01", "Barbera", 1000, 0.5)
-    l1.configura_parametri(cap_giornaliera=30.0, tempo_unitario=0.4, concime="Urea", trattamento="Poltiglia Bordolese")
-    
-    # Configurazione Lotto 2: Aglianico (Varietà tardiva, vincoli diversi)
-    l2 = SimulatoreLottoVigneto("L02", "Aglianico", 1000, 0.5)
-    l2.configura_parametri(cap_giornaliera=15.0, tempo_unitario=0.6, concime="Nessuno", trattamento="Zolfo")
-    
-    # Configurazione Lotto 3: Moscato (Più delicato)
-    l3 = SimulatoreLottoVigneto("L03", "Moscato", 1000, 0.5)
-    l3.configura_parametri(cap_giornaliera=50.0, tempo_unitario=0.3, concime="Zolfato", trattamento="Nessuno")
-    
-    lista_lotti = [l1, l2, l3]
+    # Se la richiesta arriva dal WEB (JSON), devo costruire gli oggetti dinamicamente
+    if modalita_input == 'json' and json_data:
+        try:
+            # Deserializzazione: Converto la stringa JSON in lista di dizionari Python
+            dati_input_list = json.loads(json_data)
+            
+            for d in dati_input_list:
+                # Istanzio l'oggetto usando i dati ricevuti dal sito
+                nuovo_lotto = SimulatoreLottoVigneto(
+                    id_lotto=d['id'], 
+                    nome_cultivar=d['cultivar'], 
+                    numero_piante=int(d['n_piante']), 
+                    ettari=float(d['ettari'])
+                )
+                # Configuro i parametri variabili
+                nuovo_lotto.configura_parametri(
+                    cap_giornaliera=float(d['config']['cap_giornaliera']),
+                    tempo_unitario=float(d['config']['tempo_unitario']),
+                    concime=d['config']['concime'],
+                    trattamento=d['config']['trattamento']
+                )
+                lista_lotti.append(nuovo_lotto)
+                
+        except Exception as e:
+            # Fallback di sicurezza: se il JSON è corrotto, restituisco errore nel log
+            # In un caso reale gestirei l'errore meglio, qui torno ai default o stampo errore
+            print(f"[ERRORE PARSING JSON]: {e}")
+            return json.dumps({"error": "Formato JSON non valido"}), 500
 
+    else:
+        # Se sono in modalità MANUALE (Console), uso i dati di default della mia azienda
+        # Configurazione Lotto 1: Barbera
+        l1 = SimulatoreLottoVigneto("L01", "Barbera", 1300, 0.7)
+        l1.configura_parametri(cap_giornaliera=30.0, tempo_unitario=0.4, concime="Urea", trattamento="Poltiglia Bordolese")
+        
+        # Configurazione Lotto 2: Aglianico
+        l2 = SimulatoreLottoVigneto("L02", "Aglianico", 1200, 0.6)
+        l2.configura_parametri(cap_giornaliera=15.0, tempo_unitario=0.6, concime="Nessuno", trattamento="Zolfo")
+        
+        # Configurazione Lotto 3: Moscato
+        l3 = SimulatoreLottoVigneto("L03", "Moscato", 500, 0.2)
+        l3.configura_parametri(cap_giornaliera=50.0, tempo_unitario=0.3, concime="Zolfato", trattamento="Nessuno")
+        
+        lista_lotti = [l1, l2, l3]
+
+    # --- FASE 2: ESECUZIONE SIMULAZIONE (IoT + Calcoli) ---
+    
     # Ottengo i dati ambientali simulati (IoT)
     meteo = ottieni_dati_meteo_iot()
     
@@ -196,32 +230,34 @@ def main_controller(modalita_input, json_data=None):
         }
     }
 
-    # --- GESTIONE OUTPUT (Polimorfismo della risposta) ---
-    
+    # --- FASE 3: GESTIONE OUTPUT (Report vs JSON) ---
+
     if modalita_input == 'manuale':
         # Output formattato per la visualizzazione immediata su terminale (Report Testuale)
-        print("="*42)
+        print("*" * 3 + "\n")
+        print("=" * 42)
         print("📋 REPORT PRODUZIONE TIMPE SMART VINEYARD")
-        print("="*42)
+        print("=" * 42)
         print(f"\n⛅ METEO RILEVATO: Pioggia {meteo['pioggia_mm']}mm | Temp {meteo['temp_avg']}°C | Rischio: {meteo['rischio_patogeni']}")
         
         for res in risultati_simulazione:
-            print(f"\n🍇 CULTIVAR: {res['cultivar']} (Lotto {res['id']})")
+            print(f"")
+            print("-" * 35)
+            print(f"🍇 CULTIVAR: {res['cultivar']} (Lotto {res['id']})")
             print(f"   ⚙️  Config: {res['input_config']['concime']} + {res['input_config']['trattamento']}")
             print(f"   ⚖️  Resa Stimata: {res['output']['uva_kg']} Kg")
             print(f"   🍷 Produzione Vino: {res['output']['vino_litri']} Litri")
-            print(f"   🚜 Tempo Ciclo: {res['output']['ore_totali']} Ore")
-            print("-" * 30)
+            print(f"   🚜 Tempo Ciclo: {res['output']['ore_totali']} Ore")    
         
         # Sezione Totali
-        print("\n" + "="*42)
+        print("\n" + "=" * 42)
         print("📊 RIEPILOGO GENERALE AZIENDA")
-        print("="*42)
-        print(f"📦 Totale Uva Raccolta: {dati_finali['totali_azienda']['totale_uva_kg']} Kg")
+        print("=" * 42)
+        print(f"\n📦 Totale Uva Raccolta: {dati_finali['totali_azienda']['totale_uva_kg']} Kg")
         print(f"🛢️  Totale Vino Prodotto: {dati_finali['totali_azienda']['totale_vino_litri']} Litri")
         print(f"🍾 Stima Bottiglie (1.5L): {dati_finali['totali_azienda']['stima_bottiglie_1_5L']} Pezzi")
         print(f"⏱️  Ore lavoro totali: {dati_finali['totali_azienda']['totale_ore_lavoro']} h")
-        print("="*42 + "\n")
+        print("\n" + "*" * 3 + "\n")
             
     elif modalita_input == 'json':
         # Risposta standard API per il frontend (Interfaccia Web)
@@ -234,5 +270,5 @@ if __name__ == "__main__":
     main_controller('manuale')
     
     # Esempio 2: Simulazione richiesta dal sito web (commentata per il test)
-    # response = main_controller('json')
+    # response = main_controller('json', strjson)
     # print(response)
