@@ -164,10 +164,37 @@ def main_controller(modalita_input, json_data=None):
     # Ottengo i dati ambientali simulati (IoT)
     meteo = ottieni_dati_meteo_iot()
     
-    # Colleziono i risultati
+    # Colleziono i risultati e calcolo i totali
     risultati_simulazione = []
+    
+    # Variabili accumulatori per i totali
+    tot_kg_complessivi = 0
+    tot_litri_complessivi = 0
+    tot_ore_complessive = 0
+
     for lotto in lista_lotti:
-        risultati_simulazione.append(lotto.esegui_simulazione(meteo))
+        res = lotto.esegui_simulazione(meteo)
+        risultati_simulazione.append(res)
+        
+        # Aggiorno i contatori totali
+        tot_kg_complessivi += res['output']['uva_kg']
+        tot_litri_complessivi += res['output']['vino_litri']
+        tot_ore_complessive += res['output']['ore_totali']
+
+    # Calcolo bottiglie (formato Magnum o standard 1.5L come da nostra tradizione)
+    tot_bottiglie = int(tot_litri_complessivi / 1.5)
+
+    # Preparo l'oggetto dati completo (Utile sia per JSON che per Console)
+    dati_finali = {
+        "meteo_rilevato": meteo,
+        "dettaglio_lotti": risultati_simulazione,
+        "totali_azienda": {
+            "totale_uva_kg": round(tot_kg_complessivi, 2),
+            "totale_vino_litri": round(tot_litri_complessivi, 2),
+            "totale_ore_lavoro": round(tot_ore_complessive, 1),
+            "stima_bottiglie_1_5L": tot_bottiglie
+        }
+    }
 
     # --- GESTIONE OUTPUT (Polimorfismo della risposta) ---
     
@@ -185,11 +212,21 @@ def main_controller(modalita_input, json_data=None):
             print(f"   🍷 Produzione Vino: {res['output']['vino_litri']} Litri")
             print(f"   🚜 Tempo Ciclo: {res['output']['ore_totali']} Ore")
             print("-" * 30)
+        
+        # Sezione Totali
+        print("\n" + "="*42)
+        print("📊 RIEPILOGO GENERALE AZIENDA")
+        print("="*42)
+        print(f"📦 Totale Uva Raccolta: {dati_finali['totali_azienda']['totale_uva_kg']} Kg")
+        print(f"🛢️  Totale Vino Prodotto: {dati_finali['totali_azienda']['totale_vino_litri']} Litri")
+        print(f"🍾 Stima Bottiglie (1.5L): {dati_finali['totali_azienda']['stima_bottiglie_1_5L']} Pezzi")
+        print(f"⏱️  Ore lavoro totali: {dati_finali['totali_azienda']['totale_ore_lavoro']} h")
+        print("="*42 + "\n")
             
     elif modalita_input == 'json':
         # Risposta standard API per il frontend (Interfaccia Web)
-        # Serializzo la lista di dizionari in una stringa JSON
-        return json.dumps(risultati_simulazione, indent=4)
+        # Ora include sia i dettagli che i totali in un unico oggetto JSON
+        return json.dumps(dati_finali, indent=4)
 
 # --- ENTRY POINT ---
 if __name__ == "__main__":
