@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timpe Smart Vineyard - Dashboard 4.0</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <style>
+        /* Stili personalizzati per il tema "Vitivinicolo" */
+        body { 
+            background-color: #f8f9fa; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        }
+        
+        /* Header personalizzato con gradiente */
+        .main-header {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 5px solid #2ecc71;
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Card dei Lotti: Simmetria e colori distintivi */
+        .card {
+            border: none;
+            transition: transform 0.2s; /* Effetto hover */
+            height: 100%; /* Forza tutte le card alla stessa altezza */
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* CLASSI PER BORDI UNIFORMI (Top spesso, contorno sottile) */
+        .card-uniform-success { border: 1px solid #198754; border-top: 5px solid #198754; }
+        .card-uniform-danger  { border: 1px solid #dc3545; border-top: 5px solid #dc3545; }
+        .card-uniform-warning { border: 1px solid #ffc107; border-top: 5px solid #ffc107; }
+        .card-uniform-primary { border: 1px solid #0d6efd; border-top: 5px solid #0d6efd; }
+        .card-uniform-info    { border: 1px solid #0dcaf0; border-top: 5px solid #0dcaf0; }
+        .card-uniform-dark    { border: 1px solid #343a40; border-top: 5px solid #343a40; }
+
+        /* Bordi colorati per distinguere le tipologie di vino */
+        .border-top-red { border-top: 5px solid #722F37; }   /* Rosso */
+        .border-top-white { border-top: 5px solid #F1D05D; } /* Bianco */
+
+        /* Sezione Risultati (nascosta all'avvio) */
+        .result-section {
+            display: none;
+            animation: fadeIn 0.8s;
+        }
+
+        /* Stile per l'icona informativa (i) */
+        .info-icon {
+            cursor: help;
+            font-size: 0.9rem;
+            margin-left: 8px;
+            color: #6c757d; /* Grigio discreto */
+            transition: color 0.2s;
+        }
+        .info-icon:hover {
+            color: #0d6efd; /* Diventa blu al passaggio */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-header text-center shadow">
+        <div class="container">
+            <h1>🍇 Timpe Smart Vineyard</h1>
+            <p class="lead mb-0">Sistema di Simulazione e Supporto alle Decisioni (DSS)</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        
+        <!-- Schede configurazione dei tre lotti -->
+        <form id="simulazioneForm">
+            <div class="row g-4">
+                
+                <!-- Lotto 1: Barbera (Rosso) -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-top-red">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-secondary">🍷 Lotto 1: Barbera</h5>
+                            <span class="badge bg-danger mb-3">Tipologia: Rosso</span>
+                            
+                            <input type="hidden" name="id_1" value="L01">
+                            <input type="hidden" name="nome_1" value="Barbera">
+                            <input type="hidden" name="tipo_1" value="Rosso">
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Numero Piante</label>
+                                <input type="number" class="form-control" name="piante_1" value="1300">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Superficie (Ettari)</label>
+                                <input type="number" step="0.1" class="form-control" name="ettari_1" value="0.7">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
+                                <input type="number" class="form-control" name="cap_1" value="30">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Fertilizzante</label>
+                                <select class="form-select" name="concime_1">
+                                    <option value="Nessuno">Nessuno</option>
+                                    <option value="Urea" selected>Urea (Azoto)</option>
+                                    <option value="Zolfato">Zolfato Ammonico</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Trattamento Fitosanitario</label>
+                                <select class="form-select" name="tratt_1">
+                                    <option value="Nessuno">Nessuno</option>
+                                    <option value="Poltiglia Bordolese" selected>Poltiglia Bordolese</option>
+                                    <option value="Zolfo">Zolfo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lotto 2: Aglianico (Rosso) -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-top-red">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-secondary">🍷 Lotto 2: Aglianico</h5>
+                            <span class="badge bg-danger mb-3">Tipologia: Rosso</span>
+
+                            <input type="hidden" name="id_2" value="L02">
+                            <input type="hidden" name="nome_2" value="Aglianico">
+                            <input type="hidden" name="tipo_2" value="Rosso">
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Numero Piante</label>
+                                <input type="number" class="form-control" name="piante_2" value="1200">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Superficie (Ettari)</label>
+                                <input type="number" step="0.1" class="form-control" name="ettari_2" value="0.6">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
+                                <input type="number" class="form-control" name="cap_2" value="15">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Fertilizzante</label>
+                                <select class="form-select" name="concime_2">
+                                    <option value="Nessuno" selected>Nessuno</option>
+                                    <option value="Urea">Urea (Azoto)</option>
+                                    <option value="Zolfato">Zolfato Ammonico</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Trattamento Fitosanitario</label>
+                                <select class="form-select" name="tratt_2">
+                                    <option value="Nessuno">Nessuno</option>
+                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese</option>
+                                    <option value="Zolfo" selected>Zolfo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lotto 3: Moscato (Bianco) -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-top-white">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-secondary">🥂 Lotto 3: Moscato</h5>
+                            <span class="badge bg-warning text-dark mb-3">Tipologia: Bianco</span>
+
+                            <input type="hidden" name="id_3" value="L03">
+                            <input type="hidden" name="nome_3" value="Moscato">
+                            <input type="hidden" name="tipo_3" value="Bianco">
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Numero Piante</label>
+                                <input type="number" class="form-control" name="piante_3" value="500">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Superficie (Ettari)</label>
+                                <input type="number" step="0.1" class="form-control" name="ettari_3" value="0.3">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
+                                <input type="number" class="form-control" name="cap_3" value="50">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Fertilizzante</label>
+                                <select class="form-select" name="concime_3">
+                                    <option value="Nessuno">Nessuno</option>
+                                    <option value="Urea">Urea (Azoto)</option>
+                                    <option value="Zolfato" selected>Zolfato Ammonico</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Trattamento Fitosanitario</label>
+                                <select class="form-select" name="tratt_3">
+                                    <option value="Nessuno" selected>Nessuno</option>
+                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese</option>
+                                    <option value="Zolfo">Zolfo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Bottone per l'avvio della simulazione del codice Python -->
+            </div> <div class="text-center mt-5">
+                <button type="button" onclick="avviaSimulazione()" class="btn btn-success btn-lg px-5 shadow rounded-pill fw-bold">
+                    🚀 AVVIA SIMULAZIONE
+                </button>
+            </div>
+        </form>
+
+        <!-- Sezione Risultati: Report e Grafici -->
+        <div id="risultatiSection" class="result-section mt-5">
+            <h3 class="border-bottom pb-2 mb-4">📊 Report e Analisi Dati</h3>
+
+            <div class="alert alert-info d-flex align-items-center shadow-sm" role="alert">
+                <div style="font-size: 2.5rem; margin-right: 20px;">⛅</div>
+                <div>
+                    <h5 class="alert-heading fw-bold">Trend Meteo Stagionale (IoT Media)</h5>
+                    <p class="mb-0" id="meteoText">Lettura dati in corso...</p>
+                </div>
+            </div>
+
+            <!-- Quattro schede riassuntive con icone e tooltip -->
+            <div class="row g-3 text-center mb-5">
+                <div class="col-6 col-md-3">
+                    <div class="card p-3 shadow-sm card-uniform-success h-100">
+                        <h3 class="fw-bold text-success">📦 <span id="totUva">0</span></h3>
+                        <small class="text-muted fw-bold">Totale Uva (Kg)
+                            <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                  title="Quantità lorda raccolta in campo. Dipende dalla resa agronomica per pianta, influenzata da meteo, concimazione e salute della vite.">
+                                  &#9432;
+                            </span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card p-3 shadow-sm card-uniform-danger h-100">
+                        <h3 class="fw-bold text-danger">🍷 <span id="totVino">0</span></h3>
+                        <small class="text-muted fw-bold">Totale Vino (Lt)
+                            <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                  title="Prodotto finito netto. Calcolato con una resa di trasformazione variabile (65-75%) in base alla tecnica di vinificazione (Rosso/Bianco).">
+                                  &#9432;
+                            </span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card p-3 shadow-sm card-uniform-warning h-100">
+                        <h3 class="fw-bold text-warning">♻️ <span id="totVinaccia">0</span></h3>
+                        <small class="text-muted fw-bold">Biomassa (Kg)
+                            <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                  title="Sottoprodotto (bucce, vinaccioli) destinato all'economia circolare (distillazione o biomassa energetica). Rappresenta circa il 20% del peso iniziale.">
+                                  &#9432;
+                            </span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card p-3 shadow-sm card-uniform-primary h-100">
+                        <h3 class="fw-bold text-primary">🍾 <span id="totBottiglie">0</span></h3>
+                        <small class="text-muted fw-bold">Bottiglie (1.5L)
+                            <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                  title="Stima confezionamento in formato Magnum (1.5 Litri). Il calcolo è puramente volumetrico sul totale del vino prodotto.">
+                                  &#9432;
+                            </span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grafici di Produzione e Tempi di Lavoro -->
+            <div class="row g-4">
+                <div class="col-12 col-lg-8">
+                    <div class="card shadow-sm card-uniform-dark h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center fw-bold">Produzione per Cultivar</h5>
+                            <canvas id="chartProduzione"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-lg-4">
+                    <div class="card shadow-sm card-uniform-dark h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-center fw-bold">Output di Processo</h5>
+                            <canvas id="chartOutput"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card shadow-sm card-uniform-dark">
+                        <div class="card-body">
+                            <h5 class="card-title text-center fw-bold">
+                                ⏱️ Analisi Ore Lavorate (Manodopera Attiva)
+                                <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                      title="NOTA BENE: Il dato indica esclusivamente le ORE UOMO (manodopera attiva) necessarie per le operazioni (es. pigiatura, rimontaggi, potatura). NON include il tempo passivo biologico di fermentazione o affinamento, durante il quale il prodotto non richiede intervento continuo dell'operatore.">
+                                      &#9432;
+                                </span>
+                            </h5>
+                            <canvas id="chartTempi" style="max-height: 350px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <script>
+        // Variabili globali per memorizzare le istanze dei grafici Chart.js
+        // Necessario per distruggerli prima di ridisegnarli al refresh dei dati
+        let chartProdInstance = null;
+        let chartOutInstance = null;
+        let chartTimeInstance = null;
+
+        // Registro il plugin per le etichette dati (visualizza % sui grafici)
+        Chart.register(ChartDataLabels);
+
+        /**
+         * Funzione principale asincrona chiamata dal bottone "AVVIA".
+         * Raccoglie i dati, chiama il backend Python e gestisce la UI.
+         */
+        async function avviaSimulazione() {
+            const lotti = [];
+            
+            // Ciclo sui 3 lotti per costruire il payload JSON
+            for(let i=1; i<=3; i++) {
+                // Determino il tempo unitario in base al tipo di vino (logica frontend semplificata per demo)
+                // In un'app reale questi dati potrebbero arrivare dal DB
+                let tempoLavorazione = 0.5; // Standard
+                let tipo = document.querySelector(`[name='tipo_${i}']`).value;
+                
+                if (tipo === 'Bianco') tempoLavorazione = 0.3; // Più veloce
+                if (document.querySelector(`[name='nome_${i}']`).value === 'Aglianico') tempoLavorazione = 0.6; // Più lento
+
+                lotti.push({
+                    id: document.querySelector(`[name='id_${i}']`).value,
+                    cultivar: document.querySelector(`[name='nome_${i}']`).value,
+                    tipologia: tipo,
+                    n_piante: document.querySelector(`[name='piante_${i}']`).value,
+                    ettari: document.querySelector(`[name='ettari_${i}']`).value,
+                    config: {
+                        capacita_giornaliera: document.querySelector(`[name='cap_${i}']`).value,
+                        tempo_unitario: tempoLavorazione,
+                        concime: document.querySelector(`[name='concime_${i}']`).value,
+                        trattamento: document.querySelector(`[name='tratt_${i}']`).value
+                    }
+                });
+            }
+
+            try {
+                // Chiamata Fetch API verso il backend Flask (REST pattern)
+                const response = await fetch('/api/simula', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(lotti)
+                });
+                
+                if (!response.ok) throw new Error("Errore nella risposta del server");
+                
+                const data = await response.json();
+
+                // Mostro la sezione risultati con un effetto fade
+                const resSection = document.getElementById('risultatiSection');
+                resSection.style.display = 'block';
+                resSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Aggiorno i dati testuali (DOM Manipulation)
+                document.getElementById('meteoText').innerHTML = 
+                    `Pioggia: <strong>${data.meteo_rilevato.pioggia_mm} mm</strong> | 
+                     Temp: <strong>${data.meteo_rilevato.temp_avg} °C</strong> | 
+                     Rischio Malattia: <strong>${data.meteo_rilevato.rischio_patogeni}</strong>`;
+
+                document.getElementById('totUva').innerText = data.totali_azienda.totale_uva_kg;
+                document.getElementById('totVino').innerText = data.totali_azienda.totale_vino_litri;
+                document.getElementById('totVinaccia').innerText = data.totali_azienda.totale_vinaccia_biomassa_kg;
+                document.getElementById('totBottiglie').innerText = data.totali_azienda.stima_bottiglie_1_5L;
+
+                // Aggiorno i Canvas dei grafici
+                renderizzaGrafici(data);
+
+            } catch (error) {
+                console.error("Errore fetch:", error);
+                alert("Si è verificato un errore durante la simulazione. Controlla la console.");
+            }
+        }
+
+        /**
+         * Funzione dedicata alla gestione di Chart.js
+         * Pulisce e ricrea i grafici con i nuovi dati
+         */
+        function renderizzaGrafici(data) {
+            const lotti = data.dettaglio_lotti;
+            const labels = lotti.map(l => l.cultivar);
+
+            // --- 1. Grafico a Barre (Produzione) ---
+            const ctx1 = document.getElementById('chartProduzione').getContext('2d');
+            if(chartProdInstance) chartProdInstance.destroy();
+            
+            chartProdInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Uva (Kg)', data: lotti.map(l => l.output.uva_kg), backgroundColor: '#2ecc71' },
+                        { label: 'Vino (Lt)', data: lotti.map(l => l.output.vino_litri), backgroundColor: '#e74c3c' },
+                        { label: 'Vinaccia (Kg)', data: lotti.map(l => l.output.vinaccia_kg), backgroundColor: '#f39c12' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { datalabels: { display: false } }
+                }
+            });
+
+            // --- 2. Grafico a Ciambella (Output Totale con %) ---
+            const ctx2 = document.getElementById('chartOutput').getContext('2d');
+            if(chartOutInstance) chartOutInstance.destroy();
+
+            const totVino = data.totali_azienda.totale_vino_litri;
+            const totVinaccia = data.totali_azienda.totale_vinaccia_biomassa_kg;
+            
+            // Calcolo lo scarto reale: Totale Uva - (Vino + Vinaccia)
+            // (Ora che è randomico, lo scarto è matematicamente ciò che resta)
+            // Nota: approssimiamo la densità vino 1kg=1lt per il grafico a torta
+            const totUva = data.totali_azienda.totale_uva_kg;
+            let totScarto = totUva - (totVino + totVinaccia);
+            if (totScarto < 0) totScarto = 0; // sicurezza
+
+            chartOutInstance = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vino', 'Vinaccia', 'Scarto/Perdite'],
+                    datasets: [{
+                        data: [totVino, totVinaccia, totScarto],
+                        backgroundColor: ['#722F37', '#e67e22', '#95a5a6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        datalabels: {
+                            color: '#fff',
+                            font: { weight: 'bold' },
+                            formatter: (value, ctx) => {
+                                let sum = 0;
+                                let dataArr = ctx.chart.data.datasets[0].data;
+                                dataArr.map(data => { sum += data; });
+                                let percentage = (value*100 / sum).toFixed(1)+"%";
+                                return percentage;
+                            }
+                        }
+                    }
+                }
+            });
+
+            // --- 3. Grafico Tempi Stacked (ORA USA I DATI REALI DAL JSON) ---
+            const ctx3 = document.getElementById('chartTempi').getContext('2d');
+            if(chartTimeInstance) chartTimeInstance.destroy();
+
+            // Leggo i dati direttamente dal nuovo oggetto "dettaglio_ore" nel JSON
+            const tVendemmia = lotti.map(l => l.output.dettaglio_ore.vendemmia);
+            const tCantina = lotti.map(l => l.output.dettaglio_ore.cantina);
+            const tGestione = lotti.map(l => l.output.dettaglio_ore.gestione);
+
+            chartTimeInstance = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Raccolta (Campo)', data: tVendemmia, backgroundColor: '#27ae60' },
+                        { label: 'Trasformazione (Cantina)', data: tCantina, backgroundColor: '#8e44ad' },
+                        { label: 'Gestione Aziendale', data: tGestione, backgroundColor: '#34495e' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y', // Barre orizzontali
+                    responsive: true,
+                    scales: { x: { stacked: true }, y: { stacked: true } },
+                    plugins: { datalabels: { display: false } }
+                }
+            });
+        }
+
+        // Script per far apparire le nuvolette informative
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+</html>
