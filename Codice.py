@@ -1,26 +1,65 @@
 import random
 import json
 
-# Esempio di stringa JSON in ingresso (simulazione richiesta dal frontend web)
-strjson = '[ { "id": "L01", "cultivar": "Barbera", "n_piante": 1000, "ettari": 0.7, "config": { "cap_giornaliera": 40.0, "tempo_unitario": 0.5, "concime": "Urea", "trattamento": "Poltiglia Bordolese" } }, { "id": "L02", "cultivar": "Aglianico", "n_piante": 1200, "ettari": 0.6, "config": { "cap_giornaliera": 20.0, "tempo_unitario": 0.6, "concime": "Nessuno", "trattamento": "Zolfo" } }, { "id": "L03", "cultivar": "Moscato", "n_piante": 500, "ettari": 0.3, "config": { "cap_giornaliera": 60.0, "tempo_unitario": 0.3, "concime": "Zolfato", "trattamento": "Nessuno" } }]'
+# ======================================================================================
+#   🎛️ DASHBOARD DI CONFIGURAZIONE
+#   Modificare i parametri qui sotto per testare diverse simulazioni.
+# ======================================================================================
+
+# --------------------------------------------------------------------------------------
+# 🌐 SEZIONE A: SIMULAZIONE CHIAMATA API (WEB)
+# Per testare l'ingresso JSON (come se arrivasse dal sito), è sufficiente togliere il
+# commento dalla riga sottostante dove viene popolato manualmente JSON_SIMULATO_DAL_WEB.
+# # Se attiva, il codice ignorerà i parametri manuali della Sezione B.
+# --------------------------------------------------------------------------------------
+
+JSON_SIMULATO_DAL_WEB = None
+# JSON_SIMULATO_DAL_WEB = '[ { "id": "L-WEB-01", "cultivar": "Barbera", "tipologia": "Rosso", "n_piante": 1000, "ettari": 0.7, "config": { "capacita_giornaliera": 40.0, "tempo_unitario": 0.5, "concime": "Urea", "trattamento": "Poltiglia Bordolese" } }, { "id": "L-WEB-02", "cultivar": "Aglianico", "tipologia": "Rosso", "n_piante": 1200, "ettari": 0.6, "config": { "capacita_giornaliera": 20.0, "tempo_unitario": 0.6, "concime": "Nessuno", "trattamento": "Zolfo" } }, { "id": "L-WEB-03", "cultivar": "Moscato", "tipologia": "Bianco", "n_piante": 500, "ettari": 0.3, "config": { "capacita_giornaliera": 60.0, "tempo_unitario": 0.3, "concime": "Zolfato", "trattamento": "Nessuno" } } ]'
+
+# --------------------------------------------------------------------------------------
+# 🛠️ SEZIONE B: PARAMETRI MANUALI (DEFAULT)
+# Questi parametri vengono usati se la variabile JSON sopra è commentata o vuota.
+# --------------------------------------------------------------------------------------
+
+# Configurazione Lotto 1: Barbera (Vino Rosso - Flusso A)
+LOTTO_1 = {
+    "nome": "Barbera", "tipo": "Rosso", "piante": 1300, "ettari": 0.7,
+    "capacita_raccolta": 30.0, "tempo_lavorazione": 0.4, "concime": "Urea", "trattamento": "Poltiglia Bordolese"
+}
+
+# Configurazione Lotto 2: Aglianico (Vino Rosso - Flusso A)
+LOTTO_2 = {
+    "nome": "Aglianico", "tipo": "Rosso", "piante": 1200, "ettari": 0.6,
+    "capacita_raccolta": 15.0, "tempo_lavorazione": 0.6, "concime": "Nessuno", "trattamento": "Zolfo"
+}
+
+# Configurazione Lotto 3: Moscato (Vino Bianco - Flusso B)
+LOTTO_3 = {
+    "nome": "Moscato", "tipo": "Bianco", "piante": 500, "ettari": 0.2,
+    "capacita_raccolta": 50.0, "tempo_lavorazione": 0.3, "concime": "Zolfato", "trattamento": "Nessuno"
+}
+
+# ======================================================================================
+#   FINE CONFIGURAZIONE - INIZIO LOGICA DEL SISTEMA
+# ======================================================================================
+
 
 # --- MODULO SIMULAZIONE SENSORISTICA (IoT) ---
+# Esami: Calcolo, Probabilità e Statistica (MAT06) - Reti di calcolatori e Cybersecurity (INF01II)
 def ottieni_dati_meteo_iot():
     """
-    Simulo i dati che verrebbero trasmessi dalla centralina IoT installata nel vigneto.
-    In produzione, questa funzione farebbe una chiamata API ai sensori reali (Esame: Reti e Cybersecurity).
-    Qui uso una generazione pseudo-casuale (Esame: Calcolo Probabilità) per testare gli algoritmi.
-    
-    Restituisce: Un dizionario con mm di pioggia, temperatura e livello di rischio calcolato.
+    Simulo, attraverso la generazione di numeri casuali, i dati trasmessi dalla centralina IoT nel vigneto.
+    NOTA: I valori rappresentano il TREND MEDIO STAGIONALE dell'intero ciclo produttivo,
+    non il meteo di un singolo giorno.
     """
-    # Genero valori casuali basandomi sulle medie stagionali della mia zona (600m s.l.m.)
+    # Genero valori casuali basati sulle medie della mia zona
     pioggia_mm = random.randint(0, 150)
     temperatura_media = random.uniform(18.0, 35.0) 
     
-    # Logica applicativa: definisco il rischio patogeni in base a caldo e umidità
+    # Logica applicativa: definisco il rischio patogeni su base stagionale
     rischio = "BASSO"
     if pioggia_mm > 80 and temperatura_media > 25:
-        # Condizioni ideali per la peronospora
+        # Caldo + Umido = Condizioni ideali per la maggior parte dei pategeni
         rischio = "ALTO"
     elif pioggia_mm > 50:
         rischio = "MEDIO"
@@ -32,243 +71,247 @@ def ottieni_dati_meteo_iot():
     }
 
 # --- CLASSE CORE: DIGITAL TWIN DEL VIGNETO ---
+# Applicazione dei principi e paradigmi di Programmazione Orientata agli Oggetti (OOP).
+# Esami: Programmazione 1 (INF01) - Programmazione 2 (INF01III)
 class SimulatoreLottoVigneto:
-    def __init__(self, id_lotto, nome_cultivar, numero_piante, ettari):
+    def __init__(self, id_lotto, nome_cultivar, tipologia, numero_piante, ettari):
         """
-        Costruttore della classe. Inizializzo lo stato dell'oggetto (Lotto).
-        Applicazione dei principi di Programmazione Orientata agli Oggetti (Esame: Programmazione 1).
+        Costruttore della classe. Inizializzo lo stato dell'oggetto.
+        'tipologia' ('Rosso' o 'Bianco') determina il flusso produttivo.
         """
-        # Attributi strutturali fissi
         self.id = id_lotto
         self.cultivar = nome_cultivar
+        self.tipologia = tipologia 
         self.n_piante = numero_piante
         self.ettari = ettari
         
-        # Attributi configurabili (verranno settati in base alle decisioni dell'utente)
+        # Attributi configurabili
         self.cap_max_raccolta_q = 0.0
         self.tempo_lavorazione_q = 0.0
         self.concime = "Nessuno"
         self.trattamento = "Nessuno"
 
-    def configura_parametri(self, cap_giornaliera, tempo_unitario, concime, trattamento):
+    def configura_parametri(self, capacita_giornaliera, tempo_unitario, concime, trattamento):
         """
-        Configuro i vincoli operativi del processo produttivo.
-        Questo metodo mi permette di testare scenari "What-If" (Cosa succede se...?).
-        
-        Input:
-        - cap_giornaliera: Quanti quintali riesco a raccogliere al giorno.
-        - tempo_unitario: Ore necessarie per lavorare un quintale in cantina.
-        - concime/trattamento: Strategie agronomiche scelte.
+        Configuro i vincoli operativi per scenari 'What-If'.
         """
-        self.cap_max_raccolta_q = cap_giornaliera
+        self.cap_max_raccolta_q = capacita_giornaliera
         self.tempo_lavorazione_q = tempo_unitario
         self.concime = concime
         self.trattamento = trattamento
 
-    def calcola_resa_quantitativa(self, dati_meteo):
+    def calcola_resa_agronomica(self, dati_meteo):
         """
-        Algoritmo principale per la stima della produzione.
-        Combino le variabili decisionali con quelle ambientali (IoT).
+        Calcola l'uva prodotta in campo (Input industriale) e applico logiche condizionali per
+        modificare dinamicamente la resa in base alle variabili agronomiche in input.
+        (concimazione e rischio meteo).
         """
         # Parto da una distribuzione uniforme per simulare la variabilità naturale di ogni pianta
         resa_pianta = random.uniform(2.5, 4.5)
         
-        # Applico i modificatori in base alla strategia scelta (Logica condizionale)
-        if self.concime == "Urea": 
-            resa_pianta *= 1.15 # +15% resa stimata
-        elif self.concime == "Zolfato": 
-            resa_pianta *= 1.05 # +5% resa stimata
+        # Applico i modificatori in base alla strategia di concimazione scelta (Logica condizionale)
+        # Esami: Programmazione 1 (INF01) - Algoritmi e strutture dati (INF01I)
+        if self.concime == "Urea": resa_pianta *= 1.15
+        elif self.concime == "Zolfato": resa_pianta *= 1.05
         
-        # Gestione del rischio (Analisi dei vincoli ambientali)
-        # Se c'è rischio alto e non ho trattato con Poltiglia Bordolese, ho una perdita ingente
+        # Gestione Rischio Meteo
         if dati_meteo["rischio_patogeni"] == "ALTO" and self.trattamento != "Poltiglia Bordolese":
-             resa_pianta *= 0.60 # Perdita del 40%
+             resa_pianta *= 0.60 # Danno ingente senza prevenzione
              
-        # Calcolo totale sul lotto
-        totale_kg = resa_pianta * self.n_piante
-        return totale_kg
+        return resa_pianta * self.n_piante
 
-    def calcola_tempi_totali(self, totale_uva_kg):
+    # --- FLUSSI PRODUTTIVI DIFFERENZIATI ---
+    
+    def simula_flusso_rosso(self, kg_uva):
         """
-        Calcola il lead time totale del processo produttivo.
-        Fondamentale per la pianificazione aziendale (Esame: Strategia e Organizzazione).
-        Restituisce: Float rappresentante le ore totali.
+        FLUSSO A: Vinificazione in Rosso.
+        Prevede macerazione lunga (bucce a contatto col mosto).
         """
-        totale_quintali = totale_uva_kg / 100.0
+        litri_vino = kg_uva * 0.70
+        kg_vinaccia = kg_uva * 0.20 # Residuo solido (Biomassa)
         
-        # 1. Calcolo Tempo Vendemmia
-        # Il tempo è limitato dalla capacità giornaliera (Collo di bottiglia)
-        giorni_necessari = totale_quintali / self.cap_max_raccolta_q
-        if giorni_necessari < 1: 
-            giorni_necessari = 1
-        ore_vendemmia = giorni_necessari * 8.0 # Assumo giornata lavorativa standard
+        # Macerazione allunga i tempi di occupazione tino (+20%)
+        tempo_processo = (kg_uva / 100) * self.tempo_lavorazione_q * 1.2
+        return litri_vino, kg_vinaccia, tempo_processo
+
+    def simula_flusso_bianco(self, kg_uva):
+        """
+        FLUSSO B: Vinificazione in Bianco/Spumante.
+        Prevede pressatura soffice immediata. Vinaccia esce subito.
+        """
+        litri_vino = kg_uva * 0.70
+        kg_vinaccia = kg_uva * 0.20 # Residuo da pressatura escluso da scarti
         
-        # 2. Calcolo Tempo Lavorazione (Pigiatura/Torchiatura)
-        ore_cantina = totale_quintali * self.tempo_lavorazione_q
+        # Tempo standard (processo più veloce in questa fase)
+        tempo_processo = (kg_uva / 100) * self.tempo_lavorazione_q
+        return litri_vino, kg_vinaccia, tempo_processo
+
+
+    def calcola_tempi_totali(self, kg_uva, ore_lavorazione_cantina):
+        """
+        Somma i tempi di tutte le fasi (Campo + Cantina + Gestione).
+        """
+        totale_quintali = kg_uva / 100.0
         
-        # 3. Tempo Gestione (Stimato su base storica: 3 min a pianta + lavori trattore su ettari)
+        # Tempo Vendemmia (Vincolato da capacità giornaliera)
+        giorni_raccolta = totale_quintali / self.cap_max_raccolta_q
+        if giorni_raccolta < 1: giorni_raccolta = 1
+        ore_vendemmia = giorni_raccolta * 8.0 
+        
+        # Tempo Gestione Ordinaria (Stimato su ettari)
         ore_gestione = (self.n_piante * 0.05) + (self.ettari * 20) 
 
-        return round(ore_vendemmia + ore_cantina + ore_gestione, 1)
+        return round(ore_vendemmia + ore_lavorazione_cantina + ore_gestione, 1)
 
     def esegui_simulazione(self, dati_meteo):
         """
-        Metodo wrapper che esegue l'intera pipeline di calcolo per l'oggetto corrente.
-        Restituisce un dizionario strutturato pronto per la serializzazione JSON.
+        Wrapper che esegue l'intera pipeline.
+        Sceglie il flusso (Rosso o Bianco) in base alla tipologia.
         """
-        kg_uva = self.calcola_resa_quantitativa(dati_meteo)
-        litri_vino = kg_uva * 0.70 # Coefficiente di trasformazione medio (da mia esperienza)
-        ore_totali = self.calcola_tempi_totali(kg_uva)
+        # 1. Fase Campo
+        kg_uva = self.calcola_resa_agronomica(dati_meteo)
+        
+        # 2. Fase Trasformazione (Bivio Logico)
+        if self.tipologia == "Rosso": # Rosso
+            vino, vinaccia, ore_cantina = self.simula_flusso_rosso(kg_uva)
+        else: # Bianco
+            vino, vinaccia, ore_cantina = self.simula_flusso_bianco(kg_uva)
+
+        # 3. Calcoli Finali
+        ore_totali = self.calcola_tempi_totali(kg_uva, ore_cantina)
         
         return {
             "id": self.id,
             "cultivar": self.cultivar,
+            "tipologia": self.tipologia,
             "input_config": {
                 "concime": self.concime,
                 "trattamento": self.trattamento
             },
             "output": {
                 "uva_kg": round(kg_uva, 2),
-                "vino_litri": round(litri_vino, 2),
+                "vino_litri": round(vino, 2),
+                "vinaccia_kg": round(vinaccia, 2), # Biomassa
                 "ore_totali": ore_totali
             }
         }
 
-# --- CONTROLLER PRINCIPALE (Con polimorfismo di risposta) ---
-def main_controller(modalita_input, json_data=None):
-    """
-    Funzione di ingresso del programma. Gestisce il flusso in base alla sorgente della richiesta.
-    
-    Parametri:
-    - modalita_input: 'manuale' (per test da console) o 'json' (chiamata dal frontend web).
-    - json_data: stringa JSON contenente i parametri (solo se modalita_input è 'json').
-    """
-    
+# --- CONTROLLER PRINCIPALE ---
+def main_controller(modalita_input, json_data = None):
+    '''
+    Controller principale che gestisce l'intero flusso di simulazione.
+    modalita_input: 'manuale' o 'json' per scegliere la fonte dei dati.
+    json_data: stringa JSON se modalita_input è 'json'.
+    '''
     lista_lotti = []
 
-    # --- FASE 1: INIZIALIZZAZIONE DATI (Il Flusso Mancante!) ---
-    
-    # Se la richiesta arriva dal WEB (JSON), devo costruire gli oggetti dinamicamente
+    # --- FASE 1: INIZIALIZZAZIONE ---
+    # Controllo prioritario: Se c'è un JSON valido (e non è None), uso quello (API mode)
     if modalita_input == 'json' and json_data:
+
+        # Gestione delle eccezioni: implemento un meccanismo difensivo per evitare il crash dell'applicazione in caso di dati di input corrotti o malformati.
+        # Esame: Ingegneria del Software (INGINF06)
         try:
-            # Deserializzazione: Converto la stringa JSON in lista di dizionari Python
-            dati_input_list = json.loads(json_data)
-            
-            for d in dati_input_list:
-                # Istanzio l'oggetto usando i dati ricevuti dal sito
-                nuovo_lotto = SimulatoreLottoVigneto(
-                    id_lotto=d['id'], 
-                    nome_cultivar=d['cultivar'], 
-                    numero_piante=int(d['n_piante']), 
-                    ettari=float(d['ettari'])
+
+            # Deserializzazione del payload JSON: trasformo la stringa ricevuta dal frontend in strutture dati manipolabili dal backend Python.
+            # Esame: Basi di Dati (INGINF05)
+            dati_list = json.loads(json_data)
+
+            for d in dati_list:
+                # Nota: il JSON deve contenere il campo 'tipologia' e i nomi completi nel config
+                nuovo = SimulatoreLottoVigneto(d['id'], d['cultivar'], d['tipologia'], int(d['n_piante']), float(d['ettari']))
+                nuovo.configura_parametri(
+                    float(d['config']['capacita_giornaliera']), float(d['config']['tempo_unitario']),
+                    d['config']['concime'], d['config']['trattamento']
                 )
-                # Configuro i parametri variabili
-                nuovo_lotto.configura_parametri(
-                    cap_giornaliera=float(d['config']['cap_giornaliera']),
-                    tempo_unitario=float(d['config']['tempo_unitario']),
-                    concime=d['config']['concime'],
-                    trattamento=d['config']['trattamento']
-                )
-                lista_lotti.append(nuovo_lotto)
-                
+                lista_lotti.append(nuovo)
         except Exception as e:
             # Fallback di sicurezza: se il JSON è corrotto, restituisco errore nel log
-            # In un caso reale gestirei l'errore meglio, qui torno ai default o stampo errore
-            print(f"[ERRORE PARSING JSON]: {e}")
-            return json.dumps({"error": "Formato JSON non valido"}), 500
-
-    else:
-        # Se sono in modalità MANUALE (Console), uso i dati di default della mia azienda
-        # Configurazione Lotto 1: Barbera
-        l1 = SimulatoreLottoVigneto("L01", "Barbera", 1300, 0.7)
-        l1.configura_parametri(cap_giornaliera=30.0, tempo_unitario=0.4, concime="Urea", trattamento="Poltiglia Bordolese")
-        
-        # Configurazione Lotto 2: Aglianico
-        l2 = SimulatoreLottoVigneto("L02", "Aglianico", 1200, 0.6)
-        l2.configura_parametri(cap_giornaliera=15.0, tempo_unitario=0.6, concime="Nessuno", trattamento="Zolfo")
-        
-        # Configurazione Lotto 3: Moscato
-        l3 = SimulatoreLottoVigneto("L03", "Moscato", 500, 0.2)
-        l3.configura_parametri(cap_giornaliera=50.0, tempo_unitario=0.3, concime="Zolfato", trattamento="Nessuno")
-        
-        lista_lotti = [l1, l2, l3]
-
-    # --- FASE 2: ESECUZIONE SIMULAZIONE (IoT + Calcoli) ---
+            return json.dumps({"error": f"JSON Error: {str(e)}"}), 500
     
-    # Ottengo i dati ambientali simulati (IoT)
+    else:
+        # Modalità Manuale: Uso i dati definiti nella Dashboard in alto
+        def crea_lotto_da_config(id_l, conf):
+            Lotto = SimulatoreLottoVigneto(id_l, conf["nome"], conf["tipo"], conf["piante"], conf["ettari"])
+            Lotto.configura_parametri(conf["capacita_raccolta"], conf["tempo_lavorazione"], conf["concime"], conf["trattamento"])
+            return Lotto
+
+        lista_lotti.append(crea_lotto_da_config("L01", LOTTO_1))
+        lista_lotti.append(crea_lotto_da_config("L02", LOTTO_2))
+        lista_lotti.append(crea_lotto_da_config("L03", LOTTO_3))
+
+    # --- FASE 2: ESECUZIONE ---
     meteo = ottieni_dati_meteo_iot()
     
-    # Colleziono i risultati e calcolo i totali
-    risultati_simulazione = []
-    
-    # Variabili accumulatori per i totali
-    tot_kg_complessivi = 0
-    tot_litri_complessivi = 0
-    tot_ore_complessive = 0
+    risultati = []
+    # Accumulatori per i totali
+    tot_uva, tot_vino, tot_vinaccia, tot_ore = 0, 0, 0, 0
 
     for lotto in lista_lotti:
         res = lotto.esegui_simulazione(meteo)
-        risultati_simulazione.append(res)
+        risultati.append(res)
         
-        # Aggiorno i contatori totali
-        tot_kg_complessivi += res['output']['uva_kg']
-        tot_litri_complessivi += res['output']['vino_litri']
-        tot_ore_complessive += res['output']['ore_totali']
+        tot_uva += res['output']['uva_kg']
+        tot_vino += res['output']['vino_litri']
+        tot_vinaccia += res['output']['vinaccia_kg']
+        tot_ore += res['output']['ore_totali']
 
-    # Calcolo bottiglie (formato Magnum o standard 1.5L come da nostra tradizione)
-    tot_bottiglie = int(tot_litri_complessivi / 1.5)
-
-    # Preparo l'oggetto dati completo (Utile sia per JSON che per Console)
+    # Costruisco il dizionario finale dei dati
     dati_finali = {
         "meteo_rilevato": meteo,
-        "dettaglio_lotti": risultati_simulazione,
+        "dettaglio_lotti": risultati,
         "totali_azienda": {
-            "totale_uva_kg": round(tot_kg_complessivi, 2),
-            "totale_vino_litri": round(tot_litri_complessivi, 2),
-            "totale_ore_lavoro": round(tot_ore_complessive, 1),
-            "stima_bottiglie_1_5L": tot_bottiglie
+            "totale_uva_kg": round(tot_uva, 2),
+            "totale_vino_litri": round(tot_vino, 2),
+            "totale_vinaccia_biomassa_kg": round(tot_vinaccia, 2),
+            "totale_ore_lavoro": round(tot_ore, 1),
+            "stima_bottiglie_1_5L": int(tot_vino / 1.5)
         }
     }
 
-    # --- FASE 3: GESTIONE OUTPUT (Report vs JSON) ---
-
+    # --- FASE 3: OUTPUT ---
+    # Sintetizzo i dati operativi per fornire output decisionali utili alla pianificazione delle risorse aziendali (es. stima bottiglie e ore lavoro).
+    # Esami: Strategia, organizzazione e marketing (INGIND35) - Corporate planning e valore d'impresa (SECSP07)
     if modalita_input == 'manuale':
-        # Output formattato per la visualizzazione immediata su terminale (Report Testuale)
-        print("*" * 3 + "\n")
-        print("=" * 42)
+        print("\n" + "=" * 42)
         print("📋 REPORT PRODUZIONE TIMPE SMART VINEYARD")
-        print("=" * 42)
-        print(f"\n⛅ METEO RILEVATO: Pioggia {meteo['pioggia_mm']}mm | Temp {meteo['temp_avg']}°C | Rischio: {meteo['rischio_patogeni']}")
+        print("=" * 42 + "\n")
+        print(f"⛅ TREND METEO STAGIONALE: Pioggia {meteo['pioggia_mm']}mm | Rischio: {meteo['rischio_patogeni']}")
         
-        for res in risultati_simulazione:
-            print(f"")
+        for res in risultati:
+            print(f"\n🍇 CULTIVAR [{res['id']}]:  {res['cultivar']} ({res['tipologia']})")
+            print(f"   ⚙️  Config:       {res['input_config']['concime']} + {res['input_config']['trattamento']}")
+            print(f"   ⚖️  Resa Uva:     {res['output']['uva_kg']} Kg")
+            print(f"   🍷 Vino Finale:  {res['output']['vino_litri']} Litri")
+            print(f"   ♻️  Vinaccia:     {res['output']['vinaccia_kg']} Kg (Biomassa)")
+            print(f"   ⏱️  Tempo Ciclo:  {res['output']['ore_totali']} Ore")
             print("-" * 35)
-            print(f"🍇 CULTIVAR: {res['cultivar']} (Lotto {res['id']})")
-            print(f"   ⚙️  Config: {res['input_config']['concime']} + {res['input_config']['trattamento']}")
-            print(f"   ⚖️  Resa Stimata: {res['output']['uva_kg']} Kg")
-            print(f"   🍷 Produzione Vino: {res['output']['vino_litri']} Litri")
-            print(f"   🚜 Tempo Ciclo: {res['output']['ore_totali']} Ore")    
         
-        # Sezione Totali
         print("\n" + "=" * 42)
         print("📊 RIEPILOGO GENERALE AZIENDA")
         print("=" * 42)
-        print(f"\n📦 Totale Uva Raccolta: {dati_finali['totali_azienda']['totale_uva_kg']} Kg")
-        print(f"🛢️  Totale Vino Prodotto: {dati_finali['totali_azienda']['totale_vino_litri']} Litri")
-        print(f"🍾 Stima Bottiglie (1.5L): {dati_finali['totali_azienda']['stima_bottiglie_1_5L']} Pezzi")
-        print(f"⏱️  Ore lavoro totali: {dati_finali['totali_azienda']['totale_ore_lavoro']} h")
-        print("\n" + "*" * 3 + "\n")
+        t = dati_finali['totali_azienda']
+        print(f"📦 Totale Uva Raccolta:    {t['totale_uva_kg']} Kg")
+        print(f"🛢️  Totale Vino Prodotto:   {t['totale_vino_litri']} Litri")
+        print(f"♻️  Totale Biomassa:        {t['totale_vinaccia_biomassa_kg']} Kg")
+        print(f"🍾 Stima Bottiglie (1.5L): {t['stima_bottiglie_1_5L']} Pezzi")
+        print(f"🚜 Ore Lavoro Totali:      {t['totale_ore_lavoro']} h")
+        print("=" * 42 + "\n")
             
     elif modalita_input == 'json':
-        # Risposta standard API per il frontend (Interfaccia Web)
-        # Ora include sia i dettagli che i totali in un unico oggetto JSON
-        return json.dumps(dati_finali, indent=4)
+        return json.dumps(dati_finali, indent = 4)
 
 # --- ENTRY POINT ---
 if __name__ == "__main__":
-    # Esempio 1: Simulazione manuale (Quindi output su console)
-    main_controller('manuale')
-    
-    # Esempio 2: Simulazione richiesta dal sito web (commentata per il test)
-    # response = main_controller('json', strjson)
-    # print(response)
+    # Verifica automatica: Se la variabile JSON è diversa da None, uso quella.
+    # Altrimenti uso i dati manuali. Questo evita errori se la variabile è commentata.
+    try:
+        if JSON_SIMULATO_DAL_WEB:
+            # Eseguo in modalità JSON (simulazione API su frontend web)
+            # Esame: Tecnologie Web (INF01IV)
+            print(main_controller('json', JSON_SIMULATO_DAL_WEB))
+        else:
+            main_controller('manuale')
+    except NameError:
+        # Fallback estremo se JSON_SIMULATO_DAL_WEB non fosse stato definito
+        main_controller('manuale')
