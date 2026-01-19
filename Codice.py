@@ -24,19 +24,19 @@ JSON_SIMULATO_DAL_WEB = None
 # Configurazione Lotto 1: Barbera (Vino Rosso - Flusso A)
 LOTTO_1 = {
     "nome": "Barbera", "tipo": "Rosso", "piante": 1300, "ettari": 0.7,
-    "capacita_raccolta": 30.0, "tempo_lavorazione": 0.4, "concime": "Urea", "trattamento": "Poltiglia Bordolese"
+    "capacita_raccolta": 10.0, "tempo_lavorazione": 1.4, "concime": "Urea", "trattamento": "Poltiglia Bordolese"
 }
 
 # Configurazione Lotto 2: Aglianico (Vino Rosso - Flusso A)
 LOTTO_2 = {
     "nome": "Aglianico", "tipo": "Rosso", "piante": 1200, "ettari": 0.6,
-    "capacita_raccolta": 15.0, "tempo_lavorazione": 0.6, "concime": "Nessuno", "trattamento": "Zolfo"
+    "capacita_raccolta": 8.0, "tempo_lavorazione": 1.5, "concime": "Nessuno", "trattamento": "Zolfo"
 }
 
 # Configurazione Lotto 3: Moscato (Vino Bianco - Flusso B)
 LOTTO_3 = {
     "nome": "Moscato", "tipo": "Bianco", "piante": 500, "ettari": 0.2,
-    "capacita_raccolta": 50.0, "tempo_lavorazione": 0.3, "concime": "Zolfato", "trattamento": "Nessuno"
+    "capacita_raccolta": 12.0, "tempo_lavorazione": 0.9, "concime": "Zolfato", "trattamento": "Nessuno"
 }
 
 # ======================================================================================
@@ -127,8 +127,13 @@ class SimulatoreLottoVigneto:
         FLUSSO A: Vinificazione in Rosso.
         Prevede macerazione lunga (bucce a contatto col mosto).
         """
-        litri_vino = kg_uva * 0.70
-        kg_vinaccia = kg_uva * 0.20 # Residuo solido (Biomassa)
+        # La resa uva/vino oscilla tra 65% e 72%
+        resa_vino = random.uniform(0.65, 0.72)
+        # La vinaccia oscilla tra 18% e 22%
+        resa_vinaccia = random.uniform(0.18, 0.22)
+        
+        litri_vino = kg_uva * resa_vino
+        kg_vinaccia = kg_uva * resa_vinaccia
         
         # Macerazione allunga i tempi di occupazione tino (+20%)
         tempo_processo = (kg_uva / 100) * self.tempo_lavorazione_q * 1.2
@@ -139,29 +144,33 @@ class SimulatoreLottoVigneto:
         FLUSSO B: Vinificazione in Bianco/Spumante.
         Prevede pressatura soffice immediata. Vinaccia esce subito.
         """
-        litri_vino = kg_uva * 0.70
-        kg_vinaccia = kg_uva * 0.20 # Residuo da pressatura escluso da scarti
+        # Resa leggermente più alta per i bianchi (pressatura)
+        resa_vino = random.uniform(0.68, 0.74)
+        resa_vinaccia = random.uniform(0.15, 0.20)
         
-        # Tempo standard (processo più veloce in questa fase)
+        litri_vino = kg_uva * resa_vino
+        kg_vinaccia = kg_uva * resa_vinaccia
+        
         tempo_processo = (kg_uva / 100) * self.tempo_lavorazione_q
         return litri_vino, kg_vinaccia, tempo_processo
 
 
-    def calcola_tempi_totali(self, kg_uva, ore_lavorazione_cantina):
+    def calcola_tempi_dettagliati(self, kg_uva, ore_lavorazione_cantina):
         """
-        Somma i tempi di tutte le fasi (Campo + Cantina + Gestione).
+        Restituisce il dettaglio delle ore per ogni fase.
         """
         totale_quintali = kg_uva / 100.0
         
-        # Tempo Vendemmia (Vincolato da capacità giornaliera)
+        # Vendemmia (Vincolato da capacità giornaliera)
         giorni_raccolta = totale_quintali / self.cap_max_raccolta_q
         if giorni_raccolta < 1: giorni_raccolta = 1
         ore_vendemmia = giorni_raccolta * 8.0 
         
-        # Tempo Gestione Ordinaria (Stimato su ettari)
+        # Gestione (Stimato su ettari)
         ore_gestione = (self.n_piante * 0.05) + (self.ettari * 20) 
 
-        return round(ore_vendemmia + ore_lavorazione_cantina + ore_gestione, 1)
+        # Ritorno i 3 valori separati
+        return round(ore_vendemmia, 1), round(ore_lavorazione_cantina, 1), round(ore_gestione, 1)
 
     def esegui_simulazione(self, dati_meteo):
         """
@@ -177,8 +186,9 @@ class SimulatoreLottoVigneto:
         else: # Bianco
             vino, vinaccia, ore_cantina = self.simula_flusso_bianco(kg_uva)
 
-        # 3. Calcoli Finali
-        ore_totali = self.calcola_tempi_totali(kg_uva, ore_cantina)
+        # 3. Calcoli Tempi dettagliati
+        t_vend, t_cant, t_gest = self.calcola_tempi_dettagliati(kg_uva, ore_cantina)
+        ore_totali = t_vend + t_cant + t_gest
         
         return {
             "id": self.id,
@@ -186,13 +196,20 @@ class SimulatoreLottoVigneto:
             "tipologia": self.tipologia,
             "input_config": {
                 "concime": self.concime,
-                "trattamento": self.trattamento
+                "trattamento": self.trattamento,
+                "cap_giornaliera": self.cap_max_raccolta_q,
+                "tempo_unitario": self.tempo_lavorazione_q
             },
             "output": {
                 "uva_kg": round(kg_uva, 2),
                 "vino_litri": round(vino, 2),
-                "vinaccia_kg": round(vinaccia, 2), # Biomassa
-                "ore_totali": ore_totali
+                "vinaccia_kg": round(vinaccia, 2),
+                "ore_totali": round(ore_totali, 1),
+                "dettaglio_ore": {
+                    "vendemmia": t_vend,
+                    "cantina": t_cant,
+                    "gestione": t_gest
+                }
             }
         }
 
@@ -279,21 +296,28 @@ def main_controller(modalita_input, json_data = None):
         print(f"⛅ TREND METEO STAGIONALE: Pioggia {meteo['pioggia_mm']}mm | Rischio: {meteo['rischio_patogeni']}")
         
         for res in risultati:
-            print(f"\n🍇 CULTIVAR [{res['id']}]:  {res['cultivar']} ({res['tipologia']})")
-            print(f"   ⚙️  Config:       {res['input_config']['concime']} + {res['input_config']['trattamento']}")
-            print(f"   ⚖️  Resa Uva:     {res['output']['uva_kg']} Kg")
-            print(f"   🍷 Vino Finale:  {res['output']['vino_litri']} Litri")
-            print(f"   ♻️  Vinaccia:     {res['output']['vinaccia_kg']} Kg (Biomassa)")
-            print(f"   ⏱️  Tempo Ciclo:  {res['output']['ore_totali']} Ore")
+            # Aggiunto ID Lotto nel titolo e rimesse le Emoji come richiesto
+            print(f"\n🍇 CULTIVAR: {res['cultivar']} ({res['tipologia']}) - ID: {res['id']}")
+            print(f"   ⚙️  Configurazione: {res['input_config']['concime']} + {res['input_config']['trattamento']}")
+            print(f"   ⚖️  Resa Uva:       {res['output']['uva_kg']} Kg")
+            print(f"   🍷 Vino Finale:    {res['output']['vino_litri']} Litri")
+            print(f"   ♻️  Vinaccia:       {res['output']['vinaccia_kg']} Kg")
+            print(f"   ⏱️  Tempi lavorazione:")
+            print(f"      Raccolta:  {res['output']['dettaglio_ore']['vendemmia']} h")
+            print(f"      Cantina:   {res['output']['dettaglio_ore']['cantina']} h")
+            print(f"      Gestione:  {res['output']['dettaglio_ore']['gestione']} h")
+            print(f"      Totale:    {res['output']['ore_totali']} h")
             print("-" * 35)
         
         print("\n" + "=" * 42)
         print("📊 RIEPILOGO GENERALE AZIENDA")
         print("=" * 42)
+
         t = dati_finali['totali_azienda']
+
         print(f"📦 Totale Uva Raccolta:    {t['totale_uva_kg']} Kg")
         print(f"🛢️  Totale Vino Prodotto:   {t['totale_vino_litri']} Litri")
-        print(f"♻️  Totale Biomassa:        {t['totale_vinaccia_biomassa_kg']} Kg")
+        print(f"♻️  Totale Vinaccia:        {t['totale_vinaccia_biomassa_kg']} Kg")
         print(f"🍾 Stima Bottiglie (1.5L): {t['stima_bottiglie_1_5L']} Pezzi")
         print(f"🚜 Ore Lavoro Totali:      {t['totale_ore_lavoro']} h")
         print("=" * 42 + "\n")
