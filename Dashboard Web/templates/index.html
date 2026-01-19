@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timpe Smart Vineyard - Dashboard 4.0</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍇</text></svg>">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         /* Stili personalizzati per il tema "Vitivinicolo" */
@@ -31,8 +32,8 @@
         /* Card dei Lotti: Simmetria e colori distintivi */
         .card {
             border: none;
-            transition: transform 0.2s; /* Effetto hover */
-            height: 100%; /* Forza tutte le card alla stessa altezza */
+            transition: transform 0.2s;
+            height: 100%;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -48,8 +49,8 @@
         .card-uniform-dark    { border: 1px solid #343a40; border-top: 5px solid #343a40; }
 
         /* Bordi colorati per distinguere le tipologie di vino */
-        .border-top-red { border-top: 5px solid #722F37; }   /* Rosso */
-        .border-top-white { border-top: 5px solid #F1D05D; } /* Bianco */
+        .border-top-red { border-top: 5px solid #722F37; }
+        .border-top-white { border-top: 5px solid #F1D05D; }
 
         /* Sezione Risultati (nascosta all'avvio) */
         .result-section {
@@ -62,16 +63,34 @@
             cursor: help;
             font-size: 0.9rem;
             margin-left: 8px;
-            color: #6c757d; /* Grigio discreto */
+            color: #6c757d;
             transition: color 0.2s;
         }
         .info-icon:hover {
-            color: #0d6efd; /* Diventa blu al passaggio */
+            color: #0d6efd;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        /* Footer */
+        .main-footer {
+            padding: 2rem 1rem;
+            margin-top: 5rem;
+            border-top: 5px solid #343a40;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .footer-link {
+            color: #0d6efd;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: inline-block;
+        }
+        .footer-link:hover {
+            color: #dc3545;
         }
     </style>
 </head>
@@ -85,7 +104,7 @@
     </div>
 
     <div class="container pb-5">
-        
+
         <!-- Schede configurazione dei tre lotti -->
         <form id="simulazioneForm">
             <div class="row g-4">
@@ -111,7 +130,7 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
-                                <input type="number" class="form-control" name="cap_1" value="30">
+                                <input type="number" class="form-control" name="cap_1" value="10">
                             </div>
 
                             <div class="mb-2">
@@ -155,7 +174,7 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
-                                <input type="number" class="form-control" name="cap_2" value="15">
+                                <input type="number" class="form-control" name="cap_2" value="8">
                             </div>
 
                             <div class="mb-2">
@@ -199,7 +218,7 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
-                                <input type="number" class="form-control" name="cap_3" value="50">
+                                <input type="number" class="form-control" name="cap_3" value="12">
                             </div>
 
                             <div class="mb-2">
@@ -245,8 +264,8 @@
             <!-- Quattro schede riassuntive con icone e tooltip -->
             <div class="row g-3 text-center mb-5">
                 <div class="col-6 col-md-3">
-                    <div class="card p-3 shadow-sm card-uniform-success h-100">
-                        <h3 class="fw-bold text-success">📦 <span id="totUva">0</span></h3>
+                    <div class="card p-3 shadow-sm card-uniform-warning h-100">
+                        <h3 class="fw-bold text-warnming">📦 <span id="totUva">0</span></h3>
                         <small class="text-muted fw-bold">Totale Uva (Kg)
                             <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                   title="Quantità lorda raccolta in campo. Dipende dalla resa agronomica per pianta, influenzata da meteo, concimazione e salute della vite.">
@@ -267,8 +286,8 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="card p-3 shadow-sm card-uniform-warning h-100">
-                        <h3 class="fw-bold text-warning">♻️ <span id="totVinaccia">0</span></h3>
+                    <div class="card p-3 shadow-sm card-uniform-success h-100">
+                        <h3 class="fw-bold text-success">♻️ <span id="totVinaccia">0</span></h3>
                         <small class="text-muted fw-bold">Biomassa (Kg)
                             <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                   title="Sottoprodotto (bucce, vinaccioli) destinato all'economia circolare (distillazione o biomassa energetica). Rappresenta circa il 20% del peso iniziale.">
@@ -282,7 +301,7 @@
                         <h3 class="fw-bold text-primary">🍾 <span id="totBottiglie">0</span></h3>
                         <small class="text-muted fw-bold">Bottiglie (1.5L)
                             <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                  title="Stima confezionamento in formato Magnum (1.5 Litri). Il calcolo è puramente volumetrico sul totale del vino prodotto.">
+                                  title="Stima confezionamento in formato 1.5 Litri. Il calcolo è puramente volumetrico sul totale del vino prodotto.">
                                   &#9432;
                             </span>
                         </small>
@@ -327,32 +346,56 @@
             </div>
         </div>
 
-    </div> <script>
-        // Variabili globali per memorizzare le istanze dei grafici Chart.js
-        // Necessario per distruggerli prima di ridisegnarli al refresh dei dati
+        <!-- Footer -->
+        <br />
+        <footer class="main-footer text-center shadow-sm">
+            <div class="container">
+                <p class="mb-1">Realizzato con il <span class="text-danger">♥</span> da <a href="https://capozzoli.me" target="_blank" class="footer-link">Gianluigi Capozzoli</a> per il Project Work Laurea L-31</p>
+                <small>
+                    Codice sorgente disponibile su 
+                    <a href="https://github.com/RallyTuning/Project-Work-L-31" target="_blank" class="footer-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github me-1" viewBox="0 0 16 16" style="vertical-align: text-bottom;">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                        </svg>GitHub
+                    </a>
+                </small>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // Inizializzazione Tooltip Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+        // Variabili globali per gestione istanze grafici
         let chartProdInstance = null;
         let chartOutInstance = null;
         let chartTimeInstance = null;
 
-        // Registro il plugin per le etichette dati (visualizza % sui grafici)
+        // Plugin per etichette dati (necessario per percentuali)
         Chart.register(ChartDataLabels);
 
         /**
-         * Funzione principale asincrona chiamata dal bottone "AVVIA".
-         * Raccoglie i dati, chiama il backend Python e gestisce la UI.
+         * Gestisce il flusso di simulazione:
+         * 1. Raccolta dati form
+         * 2. Chiamata API Backend
+         * 3. Aggiornamento Dashboard
          */
         async function avviaSimulazione() {
             const lotti = [];
             
-            // Ciclo sui 3 lotti per costruire il payload JSON
+            // Ciclo di costruzione payload JSON dai 3 lotti
             for(let i=1; i<=3; i++) {
-                // Determino il tempo unitario in base al tipo di vino (logica frontend semplificata per demo)
-                // In un'app reale questi dati potrebbero arrivare dal DB
-                let tempoLavorazione = 0.5; // Standard
+                let tempoLavorazione = 1.4; 
                 let tipo = document.querySelector(`[name='tipo_${i}']`).value;
                 
-                if (tipo === 'Bianco') tempoLavorazione = 0.3; // Più veloce
-                if (document.querySelector(`[name='nome_${i}']`).value === 'Aglianico') tempoLavorazione = 0.6; // Più lento
+                // Logica condizionale lato client per pre-configurazione
+                if (tipo === 'Bianco') tempoLavorazione = 1.0; 
+                if (document.querySelector(`[name='nome_${i}']`).value === 'Aglianico') tempoLavorazione = 1.5; 
 
                 lotti.push({
                     id: document.querySelector(`[name='id_${i}']`).value,
@@ -370,23 +413,20 @@
             }
 
             try {
-                // Chiamata Fetch API verso il backend Flask (REST pattern)
                 const response = await fetch('/api/simula', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(lotti)
                 });
                 
-                if (!response.ok) throw new Error("Errore nella risposta del server");
-                
+                if (!response.ok) throw new Error("Errore comunicazione server");
                 const data = await response.json();
 
-                // Mostro la sezione risultati con un effetto fade
+                // Renderizzazione sezione risultati
                 const resSection = document.getElementById('risultatiSection');
                 resSection.style.display = 'block';
-                resSection.scrollIntoView({ behavior: 'smooth' });
                 
-                // Aggiorno i dati testuali (DOM Manipulation)
+                // Popolamento KPI e Dati Meteo
                 document.getElementById('meteoText').innerHTML = 
                     `Pioggia: <strong>${data.meteo_rilevato.pioggia_mm} mm</strong> | 
                      Temp: <strong>${data.meteo_rilevato.temp_avg} °C</strong> | 
@@ -397,24 +437,34 @@
                 document.getElementById('totVinaccia').innerText = data.totali_azienda.totale_vinaccia_biomassa_kg;
                 document.getElementById('totBottiglie').innerText = data.totali_azienda.stima_bottiglie_1_5L;
 
-                // Aggiorno i Canvas dei grafici
-                renderizzaGrafici(data);
+                resSection.scrollIntoView({ behavior: 'smooth' });
+
+                // Strategia "Zero-to-Hero" per forzare animazione su browser remoti (con il reverse proxy dava problemi)
+                // 1. Inizializzo grafici a valore 0
+                renderizzaGrafici(data, true);
+
+                // 2. Aggiorno con dati reali dopo breve latenza (150ms)
+                setTimeout(() => {
+                    aggiornaGraficiConDatiReali(data);
+                }, 150);
 
             } catch (error) {
-                console.error("Errore fetch:", error);
-                alert("Si è verificato un errore durante la simulazione. Controlla la console.");
+                console.error("Exception:", error);
+                alert("Errore durante l'elaborazione della simulazione.");
             }
         }
 
         /**
-         * Funzione dedicata alla gestione di Chart.js
-         * Pulisce e ricrea i grafici con i nuovi dati
+         * Inizializza i Canvas dei grafici.
+         * startAtZero = true forza i dataset a 0 per preparare l'animazione.
          */
-        function renderizzaGrafici(data) {
+        function renderizzaGrafici(data, startAtZero = false) {
             const lotti = data.dettaglio_lotti;
             const labels = lotti.map(l => l.cultivar);
+            const zeroData = lotti.map(() => 0); 
+            const animConfig = { duration: 1500, easing: 'easeOutQuart' };
 
-            // --- 1. Grafico a Barre (Produzione) ---
+            // 1. Grafico Produzione (Bar Chart)
             const ctx1 = document.getElementById('chartProduzione').getContext('2d');
             if(chartProdInstance) chartProdInstance.destroy();
             
@@ -423,91 +473,113 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Uva (Kg)', data: lotti.map(l => l.output.uva_kg), backgroundColor: '#2ecc71' },
-                        { label: 'Vino (Lt)', data: lotti.map(l => l.output.vino_litri), backgroundColor: '#e74c3c' },
-                        { label: 'Vinaccia (Kg)', data: lotti.map(l => l.output.vinaccia_kg), backgroundColor: '#f39c12' }
+                        { label: 'Uva (Kg)', data: startAtZero ? zeroData : lotti.map(l => l.output.uva_kg), backgroundColor: '#198754' },
+                        { label: 'Vino (Lt)', data: startAtZero ? zeroData : lotti.map(l => l.output.vino_litri), backgroundColor: '#8e44ad' },
+                        { label: 'Vinaccia (Kg)', data: startAtZero ? zeroData : lotti.map(l => l.output.vinaccia_kg), backgroundColor: '#dc3545' }
                     ]
                 },
                 options: {
                     responsive: true,
+                    animation: animConfig,
                     plugins: { datalabels: { display: false } }
                 }
             });
 
-            // --- 2. Grafico a Ciambella (Output Totale con %) ---
+            // 2. Grafico Output (Doughnut Chart)
             const ctx2 = document.getElementById('chartOutput').getContext('2d');
             if(chartOutInstance) chartOutInstance.destroy();
-
-            const totVino = data.totali_azienda.totale_vino_litri;
-            const totVinaccia = data.totali_azienda.totale_vinaccia_biomassa_kg;
             
-            // Calcolo lo scarto reale: Totale Uva - (Vino + Vinaccia)
-            // (Ora che è randomico, lo scarto è matematicamente ciò che resta)
-            // Nota: approssimiamo la densità vino 1kg=1lt per il grafico a torta
-            const totUva = data.totali_azienda.totale_uva_kg;
-            let totScarto = totUva - (totVino + totVinaccia);
-            if (totScarto < 0) totScarto = 0; // sicurezza
-
             chartOutInstance = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
                     labels: ['Vino', 'Vinaccia', 'Scarto/Perdite'],
                     datasets: [{
-                        data: [totVino, totVinaccia, totScarto],
-                        backgroundColor: ['#722F37', '#e67e22', '#95a5a6']
+                        data: startAtZero ? [0, 0, 0] : [1, 1, 1], 
+                        backgroundColor: ['#8e44ad', '#dc3545', '#95a5a6']
                     }]
                 },
                 options: {
                     responsive: true,
+                    animation: animConfig,
                     plugins: {
                         datalabels: {
                             color: '#fff',
                             font: { weight: 'bold' },
+                            // Nascondo etichette se siamo in fase di inizializzazione
                             formatter: (value, ctx) => {
-                                let sum = 0;
-                                let dataArr = ctx.chart.data.datasets[0].data;
-                                dataArr.map(data => { sum += data; });
-                                let percentage = (value*100 / sum).toFixed(1)+"%";
-                                return percentage;
+                                if(startAtZero) return ""; 
+                                return value; 
                             }
                         }
                     }
                 }
             });
 
-            // --- 3. Grafico Tempi Stacked (ORA USA I DATI REALI DAL JSON) ---
+            // 3. Grafico Tempi (Stacked Bar)
             const ctx3 = document.getElementById('chartTempi').getContext('2d');
             if(chartTimeInstance) chartTimeInstance.destroy();
-
-            // Leggo i dati direttamente dal nuovo oggetto "dettaglio_ore" nel JSON
-            const tVendemmia = lotti.map(l => l.output.dettaglio_ore.vendemmia);
-            const tCantina = lotti.map(l => l.output.dettaglio_ore.cantina);
-            const tGestione = lotti.map(l => l.output.dettaglio_ore.gestione);
 
             chartTimeInstance = new Chart(ctx3, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Raccolta (Campo)', data: tVendemmia, backgroundColor: '#27ae60' },
-                        { label: 'Trasformazione (Cantina)', data: tCantina, backgroundColor: '#8e44ad' },
-                        { label: 'Gestione Aziendale', data: tGestione, backgroundColor: '#34495e' }
+                        { label: 'Raccolta (Campo)', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.vendemmia), backgroundColor: '#ffc107' },
+                        { label: 'Trasformazione (Cantina)', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.cantina), backgroundColor: '#8e44ad' },
+                        { label: 'Gestione Aziendale', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.gestione), backgroundColor: '#0d6efd' }
                     ]
                 },
                 options: {
-                    indexAxis: 'y', // Barre orizzontali
+                    indexAxis: 'y', 
                     responsive: true,
+                    animation: animConfig,
                     scales: { x: { stacked: true }, y: { stacked: true } },
                     plugins: { datalabels: { display: false } }
                 }
             });
         }
 
-        // Script per far apparire le nuvolette informative
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+        /**
+         * Inietta i dati reali nei grafici scatenando la transizione animata.
+         */
+        function aggiornaGraficiConDatiReali(data) {
+            const lotti = data.dettaglio_lotti;
+
+            // Update Produzione
+            if(chartProdInstance) {
+                chartProdInstance.data.datasets[0].data = lotti.map(l => l.output.uva_kg);
+                chartProdInstance.data.datasets[1].data = lotti.map(l => l.output.vino_litri);
+                chartProdInstance.data.datasets[2].data = lotti.map(l => l.output.vinaccia_kg);
+                chartProdInstance.update();
+            }
+
+            // Update Output
+            if(chartOutInstance) {
+                const totVino = data.totali_azienda.totale_vino_litri;
+                const totVinaccia = data.totali_azienda.totale_vinaccia_biomassa_kg;
+                let totScarto = data.totali_azienda.totale_uva_kg - (totVino + totVinaccia);
+                if (totScarto < 0) totScarto = 0;
+
+                chartOutInstance.data.datasets[0].data = [totVino, totVinaccia, totScarto];
+                
+                // Ridefinisco il formatter per calcolare la percentuale sui dati reali
+                chartOutInstance.options.plugins.datalabels.formatter = (value, ctx) => {
+                    let sum = 0;
+                    let dataArr = ctx.chart.data.datasets[0].data;
+                    dataArr.map(data => { sum += data; });
+                    if (sum === 0) return "0%";
+                    return (value*100 / sum).toFixed(1) + "%";
+                };
+                chartOutInstance.update();
+            }
+
+            // Update Tempi
+            if(chartTimeInstance) {
+                chartTimeInstance.data.datasets[0].data = lotti.map(l => l.output.dettaglio_ore.vendemmia);
+                chartTimeInstance.data.datasets[1].data = lotti.map(l => l.output.dettaglio_ore.cantina);
+                chartTimeInstance.data.datasets[2].data = lotti.map(l => l.output.dettaglio_ore.gestione);
+                chartTimeInstance.update();
+            }
+        }
     </script>
-</body>
 </html>

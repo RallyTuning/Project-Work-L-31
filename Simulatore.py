@@ -167,7 +167,9 @@ class SimulatoreLottoVigneto:
         ore_vendemmia = giorni_raccolta * 8.0 
         
         # Gestione (Stimato su ettari)
-        ore_gestione = (self.n_piante * 0.05) + (self.ettari * 20) 
+        # Il tempo può variare del +/- 15% in base all'annata
+        fattore_imprevisti = random.uniform(0.85, 1.15) 
+        ore_gestione = ((self.n_piante * 0.05) + (self.ettari * 20)) * fattore_imprevisti
 
         # Ritorno i 3 valori separati
         return round(ore_vendemmia, 1), round(ore_lavorazione_cantina, 1), round(ore_gestione, 1)
