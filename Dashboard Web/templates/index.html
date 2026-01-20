@@ -265,7 +265,7 @@
             <div class="row g-3 text-center mb-5">
                 <div class="col-6 col-md-3">
                     <div class="card p-3 shadow-sm card-uniform-warning h-100">
-                        <h3 class="fw-bold text-warnming">📦 <span id="totUva">0</span></h3>
+                        <h3 class="fw-bold text-warning">🧺 <span id="totUva">0</span></h3>
                         <small class="text-muted fw-bold">Totale Uva (Kg)
                             <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                   title="Quantità lorda raccolta in campo. Dipende dalla resa agronomica per pianta, influenzata da meteo, concimazione e salute della vite.">
@@ -365,35 +365,32 @@
     </div>
 
     <script>
-        // Inizializzazione Tooltip Bootstrap
+        // Attivo i tooltip di Bootstrap
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
 
-        // Variabili globali per gestione istanze grafici
-        let chartProdInstance = null;
-        let chartOutInstance = null;
-        let chartTimeInstance = null;
+        // Variabili globali grafici
+        let graficoProduzione = null;
+        let graficoTorta = null;
+        let graficoTempi = null;
 
-        // Plugin per etichette dati (necessario per percentuali)
+        // Plugin percentuali
         Chart.register(ChartDataLabels);
 
         /**
-         * Gestisce il flusso di simulazione:
-         * 1. Raccolta dati form
-         * 2. Chiamata API Backend
-         * 3. Aggiornamento Dashboard
+         * Funzione principale: Prende i dati dal form, chiama il python e aggiorna la pagina
          */
         async function avviaSimulazione() {
             const lotti = [];
             
-            // Ciclo di costruzione payload JSON dai 3 lotti
+            // 1. Recupero dati dai 3 lotti
             for(let i=1; i<=3; i++) {
                 let tempoLavorazione = 1.4; 
                 let tipo = document.querySelector(`[name='tipo_${i}']`).value;
                 
-                // Logica condizionale lato client per pre-configurazione
+                // Override manuale per bianchi e aglianico
                 if (tipo === 'Bianco') tempoLavorazione = 1.0; 
                 if (document.querySelector(`[name='nome_${i}']`).value === 'Aglianico') tempoLavorazione = 1.5; 
 
@@ -413,20 +410,21 @@
             }
 
             try {
+                // Chiamata al backend
                 const response = await fetch('/api/simula', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(lotti)
                 });
                 
-                if (!response.ok) throw new Error("Errore comunicazione server");
+                if (!response.ok) throw new Error("Errore server");
                 const data = await response.json();
 
-                // Renderizzazione sezione risultati
+                // Mostro i risultati
                 const resSection = document.getElementById('risultatiSection');
                 resSection.style.display = 'block';
                 
-                // Popolamento KPI e Dati Meteo
+                // Aggiorno testi e KPI
                 document.getElementById('meteoText').innerHTML = 
                     `Pioggia: <strong>${data.meteo_rilevato.pioggia_mm} mm</strong> | 
                      Temp: <strong>${data.meteo_rilevato.temp_avg} °C</strong> | 
@@ -439,24 +437,21 @@
 
                 resSection.scrollIntoView({ behavior: 'smooth' });
 
-                // Strategia "Zero-to-Hero" per forzare animazione su browser remoti (con il reverse proxy dava problemi)
-                // 1. Inizializzo grafici a valore 0
+                // Hack per l'animazione: prima disegno a zero, poi aggiorno
                 renderizzaGrafici(data, true);
 
-                // 2. Aggiorno con dati reali dopo breve latenza (150ms)
                 setTimeout(() => {
                     aggiornaGraficiConDatiReali(data);
                 }, 150);
 
             } catch (error) {
-                console.error("Exception:", error);
-                alert("Errore durante l'elaborazione della simulazione.");
+                console.error("Errore:", error);
+                alert("Qualcosa è andato storto nella simulazione.");
             }
         }
 
         /**
-         * Inizializza i Canvas dei grafici.
-         * startAtZero = true forza i dataset a 0 per preparare l'animazione.
+         * Inizializza i canvas. Se startAtZero è true, i grafici partono vuoti.
          */
         function renderizzaGrafici(data, startAtZero = false) {
             const lotti = data.dettaglio_lotti;
@@ -464,11 +459,11 @@
             const zeroData = lotti.map(() => 0); 
             const animConfig = { duration: 1500, easing: 'easeOutQuart' };
 
-            // 1. Grafico Produzione (Bar Chart)
+            // 1. Bar Chart Produzione
             const ctx1 = document.getElementById('chartProduzione').getContext('2d');
-            if(chartProdInstance) chartProdInstance.destroy();
+            if(graficoProduzione) graficoProduzione.destroy();
             
-            chartProdInstance = new Chart(ctx1, {
+            graficoProduzione = new Chart(ctx1, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -485,11 +480,11 @@
                 }
             });
 
-            // 2. Grafico Output (Doughnut Chart)
+            // 2. Torta Output
             const ctx2 = document.getElementById('chartOutput').getContext('2d');
-            if(chartOutInstance) chartOutInstance.destroy();
+            if(graficoTorta) graficoTorta.destroy();
             
-            chartOutInstance = new Chart(ctx2, {
+            graficoTorta = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
                     labels: ['Vino', 'Vinaccia', 'Scarto/Perdite'],
@@ -505,7 +500,6 @@
                         datalabels: {
                             color: '#fff',
                             font: { weight: 'bold' },
-                            // Nascondo etichette se siamo in fase di inizializzazione
                             formatter: (value, ctx) => {
                                 if(startAtZero) return ""; 
                                 return value; 
@@ -515,11 +509,11 @@
                 }
             });
 
-            // 3. Grafico Tempi (Stacked Bar)
+            // 3. Stacked Bar Tempi
             const ctx3 = document.getElementById('chartTempi').getContext('2d');
-            if(chartTimeInstance) chartTimeInstance.destroy();
+            if(graficoTempi) graficoTempi.destroy();
 
-            chartTimeInstance = new Chart(ctx3, {
+            graficoTempi = new Chart(ctx3, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -540,46 +534,47 @@
         }
 
         /**
-         * Inietta i dati reali nei grafici scatenando la transizione animata.
+         * Aggiorna i dati scatenando l'animazione
          */
         function aggiornaGraficiConDatiReali(data) {
             const lotti = data.dettaglio_lotti;
 
             // Update Produzione
-            if(chartProdInstance) {
-                chartProdInstance.data.datasets[0].data = lotti.map(l => l.output.uva_kg);
-                chartProdInstance.data.datasets[1].data = lotti.map(l => l.output.vino_litri);
-                chartProdInstance.data.datasets[2].data = lotti.map(l => l.output.vinaccia_kg);
-                chartProdInstance.update();
+            if(graficoProduzione) {
+                graficoProduzione.data.datasets[0].data = lotti.map(l => l.output.uva_kg);
+                graficoProduzione.data.datasets[1].data = lotti.map(l => l.output.vino_litri);
+                graficoProduzione.data.datasets[2].data = lotti.map(l => l.output.vinaccia_kg);
+                graficoProduzione.update();
             }
 
-            // Update Output
-            if(chartOutInstance) {
+            // Update Torta
+            if(graficoTorta) {
                 const totVino = data.totali_azienda.totale_vino_litri;
                 const totVinaccia = data.totali_azienda.totale_vinaccia_biomassa_kg;
                 let totScarto = data.totali_azienda.totale_uva_kg - (totVino + totVinaccia);
                 if (totScarto < 0) totScarto = 0;
 
-                chartOutInstance.data.datasets[0].data = [totVino, totVinaccia, totScarto];
+                graficoTorta.data.datasets[0].data = [totVino, totVinaccia, totScarto];
                 
-                // Ridefinisco il formatter per calcolare la percentuale sui dati reali
-                chartOutInstance.options.plugins.datalabels.formatter = (value, ctx) => {
+                // Ricalcolo percentuali
+                graficoTorta.options.plugins.datalabels.formatter = (value, ctx) => {
                     let sum = 0;
                     let dataArr = ctx.chart.data.datasets[0].data;
                     dataArr.map(data => { sum += data; });
                     if (sum === 0) return "0%";
                     return (value*100 / sum).toFixed(1) + "%";
                 };
-                chartOutInstance.update();
+                graficoTorta.update();
             }
 
             // Update Tempi
-            if(chartTimeInstance) {
-                chartTimeInstance.data.datasets[0].data = lotti.map(l => l.output.dettaglio_ore.vendemmia);
-                chartTimeInstance.data.datasets[1].data = lotti.map(l => l.output.dettaglio_ore.cantina);
-                chartTimeInstance.data.datasets[2].data = lotti.map(l => l.output.dettaglio_ore.gestione);
-                chartTimeInstance.update();
+            if(graficoTempi) {
+                graficoTempi.data.datasets[0].data = lotti.map(l => l.output.dettaglio_ore.vendemmia);
+                graficoTempi.data.datasets[1].data = lotti.map(l => l.output.dettaglio_ore.cantina);
+                graficoTempi.data.datasets[2].data = lotti.map(l => l.output.dettaglio_ore.gestione);
+                graficoTempi.update();
             }
         }
     </script>
+</body>
 </html>
