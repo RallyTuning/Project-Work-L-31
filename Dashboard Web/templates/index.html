@@ -314,7 +314,7 @@
                 <div class="col-12 col-lg-8">
                     <div class="card shadow-sm card-uniform-dark h-100">
                         <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Produzione per Cultivar</h5>
+                            <h5 class="card-title text-center fw-bold">Produzione per Lotto</h5>
                             <canvas id="chartProduzione"></canvas>
                             <div id="dettaglioBottiglie" class="mt-3 d-flex justify-content-center flex-wrap gap-2"></div>
                         </div>
@@ -324,7 +324,7 @@
                 <div class="col-12 col-lg-4">
                     <div class="card shadow-sm card-uniform-dark h-100">
                         <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Output di Processo</h5>
+                            <h5 class="card-title text-center fw-bold">Output aggregato</h5>
                             <canvas id="chartOutput"></canvas>
                         </div>
                     </div>
@@ -434,7 +434,7 @@
                 document.getElementById('totUva').innerText = data.totali_azienda.totale_uva_kg;
                 document.getElementById('totVino').innerText = data.totali_azienda.totale_vino_litri;
                 document.getElementById('totVinaccia').innerText = data.totali_azienda.totale_vinaccia_biomassa_kg;
-                document.getElementById('totBottiglie').innerText = data.totali_azienda.stima_bottiglie_1_5L;
+                document.getElementById('totBottiglie').innerText = data.totali_azienda.totale_bottiglie_1_5L;
 
                 resSection.scrollIntoView({ behavior: 'smooth' });
 
@@ -535,7 +535,7 @@
         }
 
         /**
-         * Aggiorna i dati scatenando l'animazione
+         * Aggiorna i dati della dashboard con i risultati reali ottenuti dalla simulazione Python.
          */
         function aggiornaGraficiConDatiReali(data) {
             const lotti = data.dettaglio_lotti;
@@ -557,7 +557,6 @@
 
                 graficoTorta.data.datasets[0].data = [totVino, totVinaccia, totScarto];
                 
-                // Ricalcolo percentuali
                 graficoTorta.options.plugins.datalabels.formatter = (value, ctx) => {
                     let sum = 0;
                     let dataArr = ctx.chart.data.datasets[0].data;
@@ -581,14 +580,13 @@
             containerBottiglie.innerHTML = ''; // Pulisco precedenti risultati
 
             lotti.forEach(lotto => {
-                // Calcolo bottiglie (Litri / 1.5) arrotondato per difetto
-                const numBottiglie = Math.floor(lotto.output.vino_litri / 1.5);
+                const numBottiglie = lotto.output.n_bottiglie;
                 
-                // Scelgo il colore del badge in base al tipo
-                let badgeClass = 'bg-secondary'; // Default
-                if (lotto.cultivar === 'Barbera') badgeClass = 'bg-danger';      // Rosso scuro
-                if (lotto.cultivar === 'Aglianico') badgeClass = 'bg-danger';    // Rosso scuro
-                if (lotto.cultivar === 'Moscato') badgeClass = 'bg-warning text-dark'; // Giallo
+                // Scelgo il colore del badge
+                let badgeClass = 'bg-secondary'; 
+                if (lotto.cultivar === 'Barbera') badgeClass = 'bg-danger';      
+                if (lotto.cultivar === 'Aglianico') badgeClass = 'bg-danger';    
+                if (lotto.cultivar === 'Moscato') badgeClass = 'bg-warning text-dark'; 
 
                 // Creo l'elemento HTML
                 const badgeHTML = `
