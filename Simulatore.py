@@ -53,15 +53,16 @@ def ottieni_dati_meteo_iot():
     non il meteo di un singolo giorno.
     """
     # Genero valori casuali basati sulle medie della mia zona
-    pioggia_mm = random.randint(0, 150)
+    pioggia_mm = random.randint(150, 600)
     temperatura_media = random.uniform(18.0, 35.0) 
     
     # Logica applicativa: definisco il rischio patogeni su base stagionale
     rischio = "BASSO"
-    if pioggia_mm > 80 and temperatura_media > 25:
+
+    if pioggia_mm > 350 and temperatura_media > 25:
         # Caldo + Umido = Condizioni ideali per la maggior parte dei pategeni
         rischio = "ALTO"
-    elif pioggia_mm > 50:
+    elif pioggia_mm > 200:
         rischio = "MEDIO"
         
     return {
@@ -111,12 +112,24 @@ class SimulatoreLottoVigneto:
         
         # Applico i modificatori in base alla strategia di concimazione scelta (Logica condizionale)
         # Esami: Programmazione 1 (INF01) - Algoritmi e strutture dati (INF01I)
-        if self.concime == "Urea": resa_pianta *= 1.15
-        elif self.concime == "Zolfato": resa_pianta *= 1.05
+
+        # Boost Fertilizzanti
+        if self.concime == "Urea": resa_pianta *= 1.25 # +25% Resa
+        elif self.concime == "Zolfato": resa_pianta *= 1.10 # +10% Resa
         
         # Gestione Rischio Meteo
-        if dati_meteo["rischio_patogeni"] == "ALTO" and self.trattamento != "Poltiglia Bordolese":
-             resa_pianta *= 0.60 # Danno ingente senza prevenzione
+        if dati_meteo["rischio_patogeni"] == "ALTO":
+            if self.trattamento == "Nessuno":
+                resa_pianta *= 0.50  # Disastro: Perdita del 50%
+            elif self.trattamento == "Zolfo":
+                resa_pianta *= 0.75  # Protezione parziale: Perdita del 25%
+            elif self.trattamento == "Poltiglia Bordolese":
+                resa_pianta *= 0.95  # Protezione eccellente: Perdita fisiologica solo del 5%
+                
+        elif dati_meteo["rischio_patogeni"] == "MEDIO":
+            # Anche con rischio medio, non trattare porta qualche danno
+            if self.trattamento == "Nessuno":
+                resa_pianta *= 0.85 # Perdita del 15%
              
         return resa_pianta * self.n_piante
 
@@ -167,8 +180,8 @@ class SimulatoreLottoVigneto:
         ore_vendemmia = giorni_raccolta * 8.0 
         
         # Gestione (Stimato su ettari)
-        # Il tempo può variare del +/- 15% in base all'annata
-        fattore_imprevisti = random.uniform(0.85, 1.15) 
+        # Il tempo può variare del +/- 25% in base all'annata
+        fattore_imprevisti = random.uniform(0.75, 1.25)
         ore_gestione = ((self.n_piante * 0.05) + (self.ettari * 20)) * fattore_imprevisti
 
         # Ritorno i 3 valori separati

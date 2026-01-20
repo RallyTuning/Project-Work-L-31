@@ -137,16 +137,16 @@
                                 <label class="form-label small text-muted">Fertilizzante</label>
                                 <select class="form-select" name="concime_1">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Urea" selected>Urea (Azoto)</option>
-                                    <option value="Zolfato">Zolfato Ammonico</option>
+                                    <option value="Zolfato">Zolfato Ammonico (+10% Resa)</option>
+                                    <option value="Urea" selected>Urea (+25% Resa)</option>
                                 </select>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Trattamento Fitosanitario</label>
                                 <select class="form-select" name="tratt_1">
-                                    <option value="Nessuno">Nessuno</option>
-                                    <option value="Poltiglia Bordolese" selected>Poltiglia Bordolese</option>
-                                    <option value="Zolfo">Zolfo</option>
+                                    <option value="Nessuno" selected>Nessuno</option>
+                                    <option value="Zolfo">Zolfo (Protezione Base)</option>
+                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese (Protezione Totale)</option>
                                 </select>
                             </div>
                         </div>
@@ -181,16 +181,16 @@
                                 <label class="form-label small text-muted">Fertilizzante</label>
                                 <select class="form-select" name="concime_2">
                                     <option value="Nessuno" selected>Nessuno</option>
-                                    <option value="Urea">Urea (Azoto)</option>
-                                    <option value="Zolfato">Zolfato Ammonico</option>
+                                    <option value="Zolfato">Zolfato Ammonico (+10% Resa)</option>
+                                    <option value="Urea">Urea (+25% Resa)</option>
                                 </select>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Trattamento Fitosanitario</label>
                                 <select class="form-select" name="tratt_2">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese</option>
-                                    <option value="Zolfo" selected>Zolfo</option>
+                                    <option value="Zolfo" selected>Zolfo (Protezione Base)</option>
+                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese (Protezione Totale)</option>
                                 </select>
                             </div>
                         </div>
@@ -225,16 +225,16 @@
                                 <label class="form-label small text-muted">Fertilizzante</label>
                                 <select class="form-select" name="concime_3">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Urea">Urea (Azoto)</option>
-                                    <option value="Zolfato" selected>Zolfato Ammonico</option>
+                                    <option value="Zolfato" selected>Zolfato Ammonico (+10% Resa)</option>
+                                    <option value="Urea">Urea (+25% Resa)</option>
                                 </select>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Trattamento Fitosanitario</label>
                                 <select class="form-select" name="tratt_3">
-                                    <option value="Nessuno" selected>Nessuno</option>
-                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese</option>
-                                    <option value="Zolfo">Zolfo</option>
+                                    <option value="Nessuno">Nessuno</option>
+                                    <option value="Zolfo">Zolfo (Protezione Base)</option>
+                                    <option value="Poltiglia Bordolese" selected>Poltiglia Bordolese (Protezione Totale)</option>
                                 </select>
                             </div>
                         </div>
@@ -316,6 +316,7 @@
                         <div class="card-body">
                             <h5 class="card-title text-center fw-bold">Produzione per Cultivar</h5>
                             <canvas id="chartProduzione"></canvas>
+                            <div id="dettaglioBottiglie" class="mt-3 d-flex justify-content-center flex-wrap gap-2"></div>
                         </div>
                     </div>
                 </div>
@@ -574,6 +575,29 @@
                 graficoTempi.data.datasets[2].data = lotti.map(l => l.output.dettaglio_ore.gestione);
                 graficoTempi.update();
             }
+
+            // Badge Bottiglie per Lotto
+            const containerBottiglie = document.getElementById('dettaglioBottiglie');
+            containerBottiglie.innerHTML = ''; // Pulisco precedenti risultati
+
+            lotti.forEach(lotto => {
+                // Calcolo bottiglie (Litri / 1.5) arrotondato per difetto
+                const numBottiglie = Math.floor(lotto.output.vino_litri / 1.5);
+                
+                // Scelgo il colore del badge in base al tipo
+                let badgeClass = 'bg-secondary'; // Default
+                if (lotto.cultivar === 'Barbera') badgeClass = 'bg-danger';      // Rosso scuro
+                if (lotto.cultivar === 'Aglianico') badgeClass = 'bg-danger';    // Rosso scuro
+                if (lotto.cultivar === 'Moscato') badgeClass = 'bg-warning text-dark'; // Giallo
+
+                // Creo l'elemento HTML
+                const badgeHTML = `
+                    <span class="badge ${badgeClass} rounded-pill shadow-sm p-2 px-3">
+                        ${lotto.cultivar}: <strong>${numBottiglie}</strong> bt.
+                    </span>
+                `;
+                containerBottiglie.innerHTML += badgeHTML;
+            });
         }
     </script>
 </body>
