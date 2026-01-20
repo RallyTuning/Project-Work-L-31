@@ -11,12 +11,14 @@
 
 ## 🎯 Obiettivo del Progetto Work
 
-Questo lavoro propone una modellazione software della filiera produttiva agroalimentare in un ottica di Agricoltura 4.0, focalizzandosi sul settore vitivinicolo. Ho progettato e sviluppato un Simulatore Digitale (Digital Twin) con l'obiettivo di:
+In questo progetto ho voluto realizzare una modellazione software della filiera produttiva agroalimentare in un ottica di Agricoltura 4.0, concentrandomi sul settore vitivinicolo (basandomi su mia epserienza personale) ed ho progettato il Simulatore Digitale (Digital Twin) con lo scopo di:
 1.  **Gestire 3 Linee di Prodotto:** Barbera, Aglianico e Moscato.
 2.  **Simulare 2 Flussi di Lavorazione:** Vinificazione in Rosso (macerazione) e in Bianco (pressatura soffice).
 3.  **Calcolare Output e Sottoprodotti:** Stima della produzione di vino finito e della biomassa di scarto (Vinaccia) per l'economia circolare.
 
-Il sistema applica concetti trasversali appresi durante il percorso di studi, come ad esempio: **Programmazione OOP**, **Calcolo, Probabilità e Statistica**, **Reti di calcolatori e Cybersecurity**, **Algoritmi e strutture dati**, **Basi di Dati**, **Ingegneria del Software**, e altri.
+Questo Project Work rappresenta per me il punto di incontro tra la mia esperienza professionale pregressa nel settore IT e i paradigmi teorici approfonditi durante il corso di laurea. Partendo da un background tecnico già consolidato (gestione server, networking e sviluppo desktop/web), ho utilizzato questo progetto per applicare i principi appresi durante il mio percorso universitario, indirizzando le mie competenze pratiche verso una modellazione ingegneristica più rigorosa.
+
+Gli studi accademici mi hanno fornito gli strumenti matematici e metodologici necessari per elevare la qualità del software: dall'uso avanzato della logica a oggetti (OOP) e degli algoritmi di simulazione, fino alla progettazione sicura delle architetture di rete. Questo simulatore è, in definitiva, la sintesi tra il "saper fare" tecnico che ho acquisito sul campo e il "saper progettare" appreso in università.
 
 ---
 
@@ -45,7 +47,7 @@ All'interno della cartella `Dashboard Web`:
     * Visualizza i risultati tramite grafici animati (**Chart.js**) per un'analisi immediata dei KPI.
     * Comunica con il backend tramite chiamate asincrone (Fetch API).
 
-⭐️ La Dashboard è accessibile dal mio dominio: https://projectwork.capozzoli.me
+⭐️ La Dashboard è accessibile pubblicamente dal mio dominio: https://projectwork.capozzoli.me
 
 ---
 
