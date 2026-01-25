@@ -255,7 +255,7 @@ class SimulatoreLottoVigneto:
         t_vend, t_cant, t_gest = self.calcola_tempi_dettagliati(kg_uva, ore_cantina)
         ore_totali = t_vend + t_cant + t_gest
         
-        # 4Fase Calcolo Bottiglie
+        # Fase Calcolo Bottiglie
         n_bottiglie = int(vino / 1.5) # Arrotondamento per difetto a intero
 
         # Costruisco il dizionario di risposta
