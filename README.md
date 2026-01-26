@@ -91,3 +91,15 @@ La dashboard offre un controllo completo sui 3 lotti principali dell'azienda:
 │   └── 📂 templates
 │       └── 📄 index.html     # Dashboard Grafica
 └── 📄 README.md              # Documentazione
+```
+
+---
+
+## 📦 Download Release (Production Ready)
+
+Per implementare del progetto in ambiente di produzione senza dover configurare manualmente l'ambiente Python, è disponibile il pacchetto **"Full Deployment"** nella sezione **[Releases](../../releases)** di questa repository.
+
+L'archivio **v1.0** è *self-contained* e include:
+- ✅ Codice sorgente stabile.
+- ✅ Ambiente virtuale (`venv`) già configurato con tutte le dipendenze.
+- ✅ Script `start.bat` per l'esecuzione automatica e il riavvio del servizio.
