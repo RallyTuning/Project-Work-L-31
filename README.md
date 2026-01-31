@@ -1,11 +1,15 @@
-# 🍇 Timpe Smart Vineyard - Digital Twin Project
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Backend-Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Frontend-Bootstrap_5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-![Chart.js](https://img.shields.io/badge/Viz-Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+   # 🍇 Timpe Smart Vineyard - Digital Twin Project
+   
+   ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+   ![Flask](https://img.shields.io/badge/Backend-Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+   ![Bootstrap](https://img.shields.io/badge/Frontend-Bootstrap_5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+   ![Chart.js](https://img.shields.io/badge/Viz-Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+   
+   > **Project Work:** Sviluppo di un codice python per simulare un processo produttivo nel settore primario.
 
-> **Project Work:** Sviluppo di un codice python per simulare un processo produttivo nel settore primario.
+</div>
 
 ---
 
