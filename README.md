@@ -101,7 +101,7 @@ La dashboard offre un controllo completo sui 3 lotti principali dell'azienda:
 
 ## 📦 Download Release (Production Ready)
 
-Per implementare del progetto in ambiente di produzione senza dover configurare manualmente l'ambiente Python, è disponibile il pacchetto **"Full Deployment"** nella sezione **[Releases](../../releases)** di questa repository.
+Per implementare il progetto in ambiente di produzione senza dover configurare manualmente l'ambiente Python, è disponibile il pacchetto **"Full Deployment"** nella sezione **[Releases](../../releases)** di questa repository.
 
 L'archivio **v1.0** è *self-contained* e include:
 - ✅ Codice sorgente stabile.
