@@ -29,7 +29,7 @@
             border-radius: 0 0 10px 10px;
         }
 
-        /* Card dei Lotti: Simmetria e colori distintivi */
+        /* Card dei lotti: simmetria e colori distintivi */
         .card {
             border: none;
             transition: transform 0.2s;
@@ -49,10 +49,10 @@
         .card-uniform-dark    { border: 1px solid #343a40; border-top: 5px solid #343a40; }
 
         /* Bordi colorati per distinguere le tipologie di vino */
-        .border-top-red { border-top: 5px solid #722F37; }
+        .border-top-red { border-top: 5px solid #874ca9; }
         .border-top-white { border-top: 5px solid #F1D05D; }
 
-        /* Sezione Risultati (nascosta all'avvio) */
+        /* Sezione risultati (nascosta all'avvio) */
         .result-section {
             display: none;
             animation: fadeIn 0.8s;
@@ -121,32 +121,41 @@
                             <input type="hidden" name="tipo_1" value="Rosso">
 
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Numero Piante</label>
+                                <label class="form-label small text-muted">Numero piante</label>
                                 <input type="number" class="form-control" name="piante_1" value="1300">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Superficie (Ettari)</label>
+                                <label class="form-label small text-muted">Superficie (ettari)</label>
                                 <input type="number" step="0.1" class="form-control" name="ettari_1" value="0.7">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
+                                <label class="form-label small text-muted">Capacità raccolta (q/giorno)</label>
                                 <input type="number" class="form-control" name="cap_1" value="10">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Priorità</label>
+                                <select class="form-select" name="priorita_1">
+                                    <option value="1">Alta (1)</option>
+                                    <option value="2">Media (2)</option>
+                                    <option value="3" selected>Bassa (3)</option>
+                                </select>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Fertilizzante</label>
                                 <select class="form-select" name="concime_1">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Zolfato">Zolfato Ammonico (+10% Resa)</option>
-                                    <option value="Urea" selected>Urea (+25% Resa)</option>
+                                    <option value="Zolfato">Zolfato Ammonico (+10% resa)</option>
+                                    <option value="Urea" selected>Urea (+25% resa)</option>
                                 </select>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Trattamento Fitosanitario</label>
+                                <label class="form-label small text-muted">Trattamento fitosanitario</label>
                                 <select class="form-select" name="tratt_1">
                                     <option value="Nessuno" selected>Nessuno</option>
-                                    <option value="Zolfo">Zolfo (Protezione Base)</option>
-                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese (Protezione Totale)</option>
+                                    <option value="Zolfo">Zolfo (protezione base)</option>
+                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese (protezione totale)</option>
                                 </select>
                             </div>
                         </div>
@@ -165,32 +174,41 @@
                             <input type="hidden" name="tipo_2" value="Rosso">
 
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Numero Piante</label>
+                                <label class="form-label small text-muted">Numero piante</label>
                                 <input type="number" class="form-control" name="piante_2" value="1200">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Superficie (Ettari)</label>
+                                <label class="form-label small text-muted">Superficie (ettari)</label>
                                 <input type="number" step="0.1" class="form-control" name="ettari_2" value="0.6">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
+                                <label class="form-label small text-muted">Capacità raccolta (q/giorno)</label>
                                 <input type="number" class="form-control" name="cap_2" value="8">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Priorità</label>
+                                <select class="form-select" name="priorita_2">
+                                    <option value="1" selected>Alta (1)</option>
+                                    <option value="2">Media (2)</option>
+                                    <option value="3">Bassa (3)</option>
+                                </select>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Fertilizzante</label>
                                 <select class="form-select" name="concime_2">
                                     <option value="Nessuno" selected>Nessuno</option>
-                                    <option value="Zolfato">Zolfato Ammonico (+10% Resa)</option>
-                                    <option value="Urea">Urea (+25% Resa)</option>
+                                    <option value="Zolfato">Zolfato Ammonico (+10% resa)</option>
+                                    <option value="Urea">Urea (+25% resa)</option>
                                 </select>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Trattamento Fitosanitario</label>
+                                <label class="form-label small text-muted">Trattamento fitosanitario</label>
                                 <select class="form-select" name="tratt_2">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Zolfo" selected>Zolfo (Protezione Base)</option>
-                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese (Protezione Totale)</option>
+                                    <option value="Zolfo" selected>Zolfo (protezione base)</option>
+                                    <option value="Poltiglia Bordolese">Poltiglia Bordolese (protezione totale)</option>
                                 </select>
                             </div>
                         </div>
@@ -209,37 +227,71 @@
                             <input type="hidden" name="tipo_3" value="Bianco">
 
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Numero Piante</label>
+                                <label class="form-label small text-muted">Numero piante</label>
                                 <input type="number" class="form-control" name="piante_3" value="500">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Superficie (Ettari)</label>
+                                <label class="form-label small text-muted">Superficie (ettari)</label>
                                 <input type="number" step="0.1" class="form-control" name="ettari_3" value="0.3">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Capacità Raccolta (q/giorno)</label>
+                                <label class="form-label small text-muted">Capacità raccolta (q/giorno)</label>
                                 <input type="number" class="form-control" name="cap_3" value="12">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Priorità</label>
+                                <select class="form-select" name="priorita_3">
+                                    <option value="1">Alta (1)</option>
+                                    <option value="2" selected>Media (2)</option>
+                                    <option value="3">Bassa (3)</option>
+                                </select>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label small text-muted">Fertilizzante</label>
                                 <select class="form-select" name="concime_3">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Zolfato" selected>Zolfato Ammonico (+10% Resa)</option>
-                                    <option value="Urea">Urea (+25% Resa)</option>
+                                    <option value="Zolfato" selected>Zolfato Ammonico (+10% resa)</option>
+                                    <option value="Urea">Urea (+25% resa)</option>
                                 </select>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label small text-muted">Trattamento Fitosanitario</label>
+                                <label class="form-label small text-muted">Trattamento fitosanitario</label>
                                 <select class="form-select" name="tratt_3">
                                     <option value="Nessuno">Nessuno</option>
-                                    <option value="Zolfo">Zolfo (Protezione Base)</option>
-                                    <option value="Poltiglia Bordolese" selected>Poltiglia Bordolese (Protezione Totale)</option>
+                                    <option value="Zolfo">Zolfo (protezione base)</option>
+                                    <option value="Poltiglia Bordolese" selected>Poltiglia Bordolese (protezione totale)</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
+
+            <!-- Budget ore aziendali -->
+            <div class="col-12">
+                <div class="card shadow-sm card-uniform-info">
+                    <div class="card-body">
+                        <div class="row align-items-center g-3">
+                            
+                            <div class="col-12 col-md-3">
+                                <label class="form-label fw-bold mb-1">Budget ore aziendale</label>
+                                <input type="number" class="form-control form-control-lg border-info" name="ore_budget" value="200" min="0" style="max-width: auto">
+                            </div>
+
+                            <div class="col-12 col-md text-muted border-start ps-md-4">
+                                <small>
+                                    <strong>ℹ️ Funzionamento:</strong> Le ore inserite rappresentano il limite massimo di manodopera aziendale per l'intera stagione. 
+                                    I lotti vengono lavorati in ordine di <strong>Priorità</strong> e, se sono presenti lotti con priorità simile, per ID.
+                                    Se le ore finiscono, i lotti a bassa priorità verranno lavorati parzialmente o esclusi.
+                                </small>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Bottone per l'avvio della simulazione del codice Python -->
             </div> <div class="text-center mt-5">
@@ -249,14 +301,14 @@
             </div>
         </form>
 
-        <!-- Sezione Risultati: Report e Grafici -->
+        <!-- Sezione risultati: report e grafici -->
         <div id="risultatiSection" class="result-section mt-5">
-            <h3 class="border-bottom pb-2 mb-4">📊 Report e Analisi Dati</h3>
+            <h3 class="border-bottom pb-2 mb-4">📊 Report e analisi dati</h3>
 
             <div class="alert alert-info d-flex align-items-center shadow-sm" role="alert">
                 <div style="font-size: 2.5rem; margin-right: 20px;">⛅</div>
                 <div>
-                    <h5 class="alert-heading fw-bold">Trend Meteo Stagionale (IoT Media)</h5>
+                    <h5 class="alert-heading fw-bold">Trend meteo stagionale (IoT media)</h5>
                     <p class="mb-0" id="meteoText">Lettura dati in corso...</p>
                 </div>
             </div>
@@ -266,7 +318,7 @@
                 <div class="col-6 col-md-3">
                     <div class="card p-3 shadow-sm card-uniform-warning h-100">
                         <h3 class="fw-bold text-warning">🧺 <span id="totUva">0</span></h3>
-                        <small class="text-muted fw-bold">Totale Uva (Kg)
+                        <small class="text-muted fw-bold">Totale uva (Kg)
                             <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                   title="Quantità lorda raccolta in campo. Dipende dalla resa agronomica per pianta, influenzata da meteo, concimazione e salute della vite.">
                                   &#9432;
@@ -277,7 +329,7 @@
                 <div class="col-6 col-md-3">
                     <div class="card p-3 shadow-sm card-uniform-danger h-100">
                         <h3 class="fw-bold text-danger">🍷 <span id="totVino">0</span></h3>
-                        <small class="text-muted fw-bold">Totale Vino (Lt)
+                        <small class="text-muted fw-bold">Totale vino (L)
                             <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                   title="Prodotto finito netto. Calcolato con una resa di trasformazione variabile (65-75%) in base alla tecnica di vinificazione (Rosso/Bianco).">
                                   &#9432;
@@ -309,23 +361,54 @@
                 </div>
             </div>
 
-            <!-- Grafici di Produzione e Tempi di Lavoro -->
+            <!-- Grafici di produzione e tempi di lavoro -->
             <div class="row g-4">
                 <div class="col-12 col-lg-8">
                     <div class="card shadow-sm card-uniform-dark h-100">
                         <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Produzione per Lotto</h5>
+                            <h5 class="card-title text-center fw-bold">Produzione per lotto</h5>
                             <canvas id="chartProduzione"></canvas>
-                            <div id="dettaglioBottiglie" class="mt-3 d-flex justify-content-center flex-wrap gap-2"></div>
+                            
+                            <div id="badgeBottiglieContainer" class="d-flex justify-content-center gap-3 mt-3 flex-wrap"></div>
+                            <div id="dettaglioStatoLotti" class="mt-4 row g-2"></div>
+
+                            <template id="badgeTemplate">
+                                <div class="col-12 col-md-4">
+                                    <div class="p-2 border rounded shadow-sm bg-white d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong class="badge-nome text-dark">Nome</strong>
+                                            <div class="small text-muted">Priorità: <span class="badge-priorita">1</span></div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge badge-stato rounded-1">Stato</span> <div class="small mt-1 text-danger fw-bold badge-taglio">Taglio: -0%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-12 col-lg-4">
                     <div class="card shadow-sm card-uniform-dark h-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Output aggregato</h5>
-                            <canvas id="chartOutput"></canvas>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <h5 class="card-title text-center fw-bold mb-3">Ripartizione Output</h5>
+                            
+                            <div class="flex-grow-1 d-flex align-items-center justify-content-center" style="min-height: 220px;">
+                                <canvas id="chartOutput"></canvas>
+                            </div>
+
+                            <div class="mt-4 p-3 bg-light rounded border small text-muted">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge rounded-pill me-2" style="background-color: #95a5a6;">&nbsp;</span> 
+                                    <strong class="text-dark">Scarto/Perdite</strong>
+                                </div>
+                                <p class="mb-0">
+                                    Il valore <em>"Scarti"</em> isola la perdita fisiologica (es. raspi) 
+                                    che non diventa né vino finito né biomassa recuperabile (vinaccia).
+                                </p>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -334,7 +417,7 @@
                     <div class="card shadow-sm card-uniform-dark">
                         <div class="card-body">
                             <h5 class="card-title text-center fw-bold">
-                                ⏱️ Analisi Ore Lavorate (Manodopera Attiva)
+                                ⏱️ Analisi ore lavorate
                                 <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
                                       title="NOTA BENE: Il dato indica esclusivamente le ORE UOMO (manodopera attiva) necessarie per le operazioni (es. pigiatura, rimontaggi, potatura). NON include il tempo passivo biologico di fermentazione o affinamento, durante il quale il prodotto non richiede intervento continuo dell'operatore.">
                                       &#9432;
@@ -385,6 +468,8 @@
          */
         async function avviaSimulazione() {
             const lotti = [];
+
+            const oreBudget = document.querySelector("[name='ore_budget']").value;
             
             // 1. Recupero dati dai 3 lotti
             for(let i=1; i<=3; i++) {
@@ -401,6 +486,7 @@
                     tipologia: tipo,
                     n_piante: document.querySelector(`[name='piante_${i}']`).value,
                     ettari: document.querySelector(`[name='ettari_${i}']`).value,
+                    priorita: parseInt(document.querySelector(`[name='priorita_${i}']`).value),
                     config: {
                         capacita_giornaliera: document.querySelector(`[name='cap_${i}']`).value,
                         tempo_unitario: tempoLavorazione,
@@ -415,7 +501,10 @@
                 const response = await fetch('/api/simula', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(lotti)
+                    body: JSON.stringify({
+                        ore_budget: parseFloat(oreBudget),
+                        lotti: lotti
+                    })
                 });
                 
                 if (!response.ok) throw new Error("Errore server");
@@ -428,8 +517,8 @@
                 // Aggiorno testi e KPI
                 document.getElementById('meteoText').innerHTML = 
                     `Pioggia: <strong>${data.meteo_rilevato.pioggia_mm} mm</strong> | 
-                     Temp: <strong>${data.meteo_rilevato.temp_avg} °C</strong> | 
-                     Rischio Malattia: <strong>${data.meteo_rilevato.rischio_patogeni}</strong>`;
+                     Temperatura: <strong>${data.meteo_rilevato.temp_avg} °C</strong> | 
+                     Rischio malattia: <strong>${data.meteo_rilevato.rischio_patogeni}</strong>`;
 
                 document.getElementById('totUva').innerText = data.totali_azienda.totale_uva_kg;
                 document.getElementById('totVino').innerText = data.totali_azienda.totale_vino_litri;
@@ -438,7 +527,7 @@
 
                 resSection.scrollIntoView({ behavior: 'smooth' });
 
-                // Hack per l'animazione: prima disegno a zero, poi aggiorno
+                // Hack per l'animazione: prima disegno a zero, poi aggiorno (ci ho perso molto tempo)
                 renderizzaGrafici(data, true);
 
                 setTimeout(() => {
@@ -460,7 +549,7 @@
             const zeroData = lotti.map(() => 0); 
             const animConfig = { duration: 1500, easing: 'easeOutQuart' };
 
-            // 1. Bar Chart Produzione
+            // 1. Barre produzione
             const ctx1 = document.getElementById('chartProduzione').getContext('2d');
             if(graficoProduzione) graficoProduzione.destroy();
             
@@ -469,9 +558,9 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Uva (Kg)', data: startAtZero ? zeroData : lotti.map(l => l.output.uva_kg), backgroundColor: '#198754' },
-                        { label: 'Vino (Lt)', data: startAtZero ? zeroData : lotti.map(l => l.output.vino_litri), backgroundColor: '#8e44ad' },
-                        { label: 'Vinaccia (Kg)', data: startAtZero ? zeroData : lotti.map(l => l.output.vinaccia_kg), backgroundColor: '#dc3545' }
+                        { label: 'Uva (Kg)', data: startAtZero ? zeroData : lotti.map(l => l.output.uva_kg), backgroundColor: '#ffc107' },
+                        { label: 'Vino (L)', data: startAtZero ? zeroData : lotti.map(l => l.output.vino_litri), backgroundColor: '#dc3545' },
+                        { label: 'Biomassa (Kg)', data: startAtZero ? zeroData : lotti.map(l => l.output.vinaccia_kg), backgroundColor: '#198754' }
                     ]
                 },
                 options: {
@@ -481,17 +570,17 @@
                 }
             });
 
-            // 2. Torta Output
+            // 2. Torta output
             const ctx2 = document.getElementById('chartOutput').getContext('2d');
             if(graficoTorta) graficoTorta.destroy();
             
             graficoTorta = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Vino', 'Vinaccia', 'Scarto/Perdite'],
+                    labels: ['Vino', 'Biomassa', 'Scarto/Perdite'],
                     datasets: [{
                         data: startAtZero ? [0, 0, 0] : [1, 1, 1], 
-                        backgroundColor: ['#8e44ad', '#dc3545', '#95a5a6']
+                        backgroundColor: ['#dc3545', '#198754', '#95a5a6']
                     }]
                 },
                 options: {
@@ -510,7 +599,7 @@
                 }
             });
 
-            // 3. Stacked Bar Tempi
+            // 3. Barre tempi
             const ctx3 = document.getElementById('chartTempi').getContext('2d');
             if(graficoTempi) graficoTempi.destroy();
 
@@ -519,9 +608,10 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Raccolta (Campo)', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.vendemmia), backgroundColor: '#722F37' },
-                        { label: 'Trasformazione (Cantina)', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.cantina), backgroundColor: '#ffc107' },
-                        { label: 'Gestione Aziendale', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.gestione), backgroundColor: '#0d6efd' }
+                        { label: 'Raccolta', data: startAtZero? zeroData : lotti.map(l => l.output.dettaglio_ore.vendemmia), backgroundColor: '#722F37' },
+                        { label: 'Cantina', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.cantina), backgroundColor: '#b4d14b' },
+                        { label: 'Gestione', data: startAtZero ? zeroData : lotti.map(l => l.output.dettaglio_ore.gestione), backgroundColor: '#7c3ba1' },
+                        { label: 'Taglio di produzione', data: startAtZero ? zeroData : [], backgroundColor: '#e9ecef', borderColor: '#adb5bd', borderWidth: 1 }
                     ]
                 },
                 options: {
@@ -540,7 +630,7 @@
         function aggiornaGraficiConDatiReali(data) {
             const lotti = data.dettaglio_lotti;
 
-            // Update Produzione
+            // 1. Update Produzione
             if(graficoProduzione) {
                 graficoProduzione.data.datasets[0].data = lotti.map(l => l.output.uva_kg);
                 graficoProduzione.data.datasets[1].data = lotti.map(l => l.output.vino_litri);
@@ -548,54 +638,92 @@
                 graficoProduzione.update();
             }
 
-            // Update Torta
+            // 2. Update Torta
             if(graficoTorta) {
                 const totVino = data.totali_azienda.totale_vino_litri;
                 const totVinaccia = data.totali_azienda.totale_vinaccia_biomassa_kg;
                 let totScarto = data.totali_azienda.totale_uva_kg - (totVino + totVinaccia);
                 if (totScarto < 0) totScarto = 0;
-
                 graficoTorta.data.datasets[0].data = [totVino, totVinaccia, totScarto];
-                
                 graficoTorta.options.plugins.datalabels.formatter = (value, ctx) => {
                     let sum = 0;
-                    let dataArr = ctx.chart.data.datasets[0].data;
-                    dataArr.map(data => { sum += data; });
-                    if (sum === 0) return "0%";
-                    return (value*100 / sum).toFixed(1) + "%";
+                    ctx.chart.data.datasets[0].data.map(data => { sum += data; });
+                    return sum === 0 ? "0%" : (value*100 / sum).toFixed(1) + "%";
                 };
                 graficoTorta.update();
             }
 
-            // Update Tempi
+            // 3. Update tempi con calcolo ore mancanti
             if(graficoTempi) {
+                // Dati reali
                 graficoTempi.data.datasets[0].data = lotti.map(l => l.output.dettaglio_ore.vendemmia);
                 graficoTempi.data.datasets[1].data = lotti.map(l => l.output.dettaglio_ore.cantina);
                 graficoTempi.data.datasets[2].data = lotti.map(l => l.output.dettaglio_ore.gestione);
+                
+                // Calcolo differenza (ore teoriche - ore reali) per la barra grigia
+                const oreMancanti = lotti.map(l => {
+                    const diff = l.ore_necessarie_100 - l.output.ore_totali;
+                    return diff > 0 ? diff.toFixed(1) : 0;
+                });
+                graficoTempi.data.datasets[3].data = oreMancanti;
+                
                 graficoTempi.update();
             }
 
-            // Badge Bottiglie per Lotto
-            const containerBottiglie = document.getElementById('dettaglioBottiglie');
-            containerBottiglie.innerHTML = ''; // Pulisco precedenti risultati
+            // 4. Badge blu bottiglie
+            const containerBottiglie = document.getElementById('badgeBottiglieContainer');
+            if(containerBottiglie) {
+                containerBottiglie.innerHTML = '';
+                lotti.forEach(l => {
+                    // Creo badge blu scuro uniforme
+                    const badge = document.createElement('div');
+                    badge.className = 'badge fs-6 shadow-sm';
+                    badge.style.backgroundColor = '#0d6efd';
+                    badge.innerHTML = `${l.cultivar}: ${l.output.n_bottiglie} bottiglie 🍾`;
+                    containerBottiglie.appendChild(badge);
+                });
+            }
 
-            lotti.forEach(lotto => {
-                const numBottiglie = lotto.output.n_bottiglie;
-                
-                // Scelgo il colore del badge
-                let badgeClass = 'bg-secondary'; 
-                if (lotto.cultivar === 'Barbera') badgeClass = 'bg-danger';      
-                if (lotto.cultivar === 'Aglianico') badgeClass = 'bg-danger';    
-                if (lotto.cultivar === 'Moscato') badgeClass = 'bg-warning text-dark'; 
+            // 5. Badge stato rettangolari da template
+            const containerStato = document.getElementById('dettaglioStatoLotti');
+            const template = document.getElementById('badgeTemplate');
+            
+            if(containerStato && template) {
+                containerStato.innerHTML = '';
+                // Mappa per convertire il numero in testo
+                const mappaPriorita = { 1: "Alta", 2: "Media", 3: "Bassa" };
 
-                // Creo l'elemento HTML
-                const badgeHTML = `
-                    <span class="badge ${badgeClass} rounded-pill shadow-sm p-2 px-3">
-                        ${lotto.cultivar}: <strong>${numBottiglie}</strong> bt.
-                    </span>
-                `;
-                containerBottiglie.innerHTML += badgeHTML;
-            });
+                lotti.forEach(lotto => {
+                    const clone = template.content.cloneNode(true);
+                    
+                    // Popolo i dati
+                    clone.querySelector('.badge-nome').textContent = lotto.cultivar;
+                    const testoPriorita = mappaPriorita[lotto.priorita] || lotto.priorita;
+                    clone.querySelector('.badge-priorita').textContent = testoPriorita;
+                    
+                    // Logica colore/icona
+                    const perc = lotto.percentuale_elaborazione;
+                    let statoClass = perc >= 99.9 ? "bg-success" : (perc > 0 ? "bg-warning text-dark" : "bg-danger");
+                    let icona = perc >= 99.9 ? "✅" : (perc > 0 ? "⚠️" : "⛔");
+                    
+                    const badgeStato = clone.querySelector('.badge-stato');
+                    badgeStato.textContent = `${icona} ${perc}% Completato`;
+                    badgeStato.className = `badge rounded-1 ${statoClass}`;
+
+                    const divTaglio = clone.querySelector('.badge-taglio');
+
+                    // Se c'è un taglio, mostro di quanto
+                    if(perc < 100) {
+                        divTaglio.style.visibility = 'visible';
+                        divTaglio.textContent = `Taglio: -${(100 - perc).toFixed(1)}%`;
+                    } else {
+                        divTaglio.style.visibility = 'hidden'; 
+                        divTaglio.textContent = 'placeholder';
+                    }
+
+                    containerStato.appendChild(clone);
+                });
+            }
         }
     </script>
 </body>

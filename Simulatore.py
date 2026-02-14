@@ -14,7 +14,7 @@ import json
 # --------------------------------------------------------------------------------------
 
 JSON_SIMULATO_DAL_WEB = None
-# JSON_SIMULATO_DAL_WEB = '[ { "id": "L-WEB-01", "cultivar": "Barbera", "tipologia": "Rosso", "n_piante": 1000, "ettari": 0.7, "config": { "capacita_giornaliera": 40.0, "tempo_unitario": 0.5, "concime": "Urea", "trattamento": "Poltiglia Bordolese" } }, { "id": "L-WEB-02", "cultivar": "Aglianico", "tipologia": "Rosso", "n_piante": 1200, "ettari": 0.6, "config": { "capacita_giornaliera": 20.0, "tempo_unitario": 0.6, "concime": "Nessuno", "trattamento": "Zolfo" } }, { "id": "L-WEB-03", "cultivar": "Moscato", "tipologia": "Bianco", "n_piante": 500, "ettari": 0.3, "config": { "capacita_giornaliera": 60.0, "tempo_unitario": 0.3, "concime": "Zolfato", "trattamento": "Nessuno" } } ]'
+# JSON_SIMULATO_DAL_WEB = '{"ore_budget": 150, "lotti": [{"id":"L-WEB-01","cultivar":"Barbera","tipologia":"Rosso","n_piante":1300,"ettari":0.7,"priorita":3,"config":{"capacita_giornaliera":10,"tempo_unitario":1.4,"concime":"Urea","trattamento":"Poltiglia Bordolese"}},{"id":"L-WEB-02","cultivar":"Aglianico","tipologia":"Rosso","n_piante":1200,"ettari":0.6,"priorita":1,"config":{"capacita_giornaliera":8,"tempo_unitario":1.5,"concime":"Nessuno","trattamento":"Zolfo"}},{"id":"L-WEB-03","cultivar":"Moscato","tipologia":"Bianco","n_piante":500,"ettari":0.2,"priorita":2,"config":{"capacita_giornaliera":12,"tempo_unitario":1,"concime":"Zolfato","trattamento":"Nessuno"}}]}'
 
 # --------------------------------------------------------------------------------------
 # 🛠️ SEZIONE B: PARAMETRI MANUALI (DEFAULT)
@@ -34,6 +34,7 @@ JSON_SIMULATO_DAL_WEB = None
 #    - "ettari": (Float)  Superficie in ettari (usato per calcolo ore gestione/potatura).
 #
 # 3. PARAMETRI OPERATIVI (MACCHINE E UOMINI)
+#    - "priorita": (Intero) 1 = Alta, 2 = Media, 3 = Bassa. Usato per ordinare i lotti in caso di risorse limitate.
 #    - "capacita_raccolta": (Float) Quintali raccoglibili al giorno dalla squadra.
 #                           > Valore basso (es. 8.0) = Raccolta manuale lenta -> Più ore uomo.
 #                           > Valore alto (es. 40.0) = Raccolta meccanizzata -> Meno ore uomo.
@@ -48,41 +49,51 @@ JSON_SIMULATO_DAL_WEB = None
 #                 > "Urea":    +25% Resa (Spinta vegetativa forte).
 #
 #    - "trattamento": Scegliere protezione contro Meteo Avverso (Pioggia/Funghi):
-#                 > "Nessuno": Esposto a rischi. Se Meteo=ALTO rischio -> Perdita 50% raccolto.
-#                 > "Zolfo":   Protezione Base. Se Meteo=ALTO rischio -> Perdita 25% raccolto.
-#                 > "Poltiglia Bordolese": Protezione Totale (Rame). Perdita massima 5% (ho voluto comuqnue lasciare una perdita minima).
+#                     > "Nessuno": Esposto a rischi. Se Meteo=ALTO rischio -> Perdita 50% raccolto.
+#                     > "Zolfo":   Protezione Base. Se Meteo=ALTO rischio -> Perdita 25% raccolto.
+#                     > "Poltiglia Bordolese": Protezione Totale (Rame). Perdita massima 5% (ho voluto comuqnue lasciare una perdita minima).
+#
+# 5. PARAMETRO GLOBALE
+#   - "BUDGET_ORE_TOTALI": (Float) Budget massimo di ore manodopera disponibili per tutta l'azienda nella stagione
+#
 # --------------------------------------------------------------------------------------
 
-# Configurazione Lotto 1: Barbera (Vino Rosso - Flusso A)
+# Budget totale delle ore manodopera disponibili per l'intera azienda
+ORE_AZIENDALI_TOTALI = 100.0
+
+# Configurazione lotto 1: Barbera (vino rosso - flusso A)
 LOTTO_1 = {
     "nome": "Barbera",
     "tipo": "Rosso",
     "piante": 1300,
     "ettari": 0.7,
+    "priorita": 3,
     "capacita_raccolta": 10.0,
     "tempo_lavorazione": 1.4,
     "concime": "Urea",
     "trattamento": "Poltiglia Bordolese"
 }
 
-# Configurazione Lotto 2: Aglianico (Vino Rosso - Flusso A)
+# Configurazione lotto 2: Aglianico (vino rosso - flusso A)
 LOTTO_2 = {
     "nome": "Aglianico",
     "tipo": "Rosso",
     "piante": 1200,
     "ettari": 0.6,
+    "priorita": 1,
     "capacita_raccolta": 8.0,
     "tempo_lavorazione": 1.5,
     "concime": "Nessuno",
     "trattamento": "Zolfo"
 }
 
-# Configurazione Lotto 3: Moscato (Vino Bianco - Flusso B)
+# Configurazione lotto 3: Moscato (vino bianco - flusso B)
 LOTTO_3 = {
     "nome": "Moscato",
     "tipo": "Bianco",
     "piante": 500,
     "ettari": 0.2,
+    "priorita": 1,
     "capacita_raccolta": 12.0,
     "tempo_lavorazione": 1.0,
     "concime": "Zolfato",
@@ -142,7 +153,7 @@ class SimulatoreLottoVigneto:
         self.concime = "Nessuno"
         self.trattamento = "Nessuno"
 
-    def configura_parametri(self, capacita_giornaliera, tempo_unitario, concime, trattamento):
+    def configura_parametri(self, capacita_giornaliera, tempo_unitario, concime, trattamento, priorita = 2):
         """
         Configuro i vincoli operativi per scenari 'What-If'.
         """
@@ -150,6 +161,7 @@ class SimulatoreLottoVigneto:
         self.tempo_lavorazione_q = tempo_unitario
         self.concime = concime
         self.trattamento = trattamento
+        self.priorita = priorita
 
     def calcola_resa_agronomica(self, dati_meteo):
         """
@@ -263,6 +275,7 @@ class SimulatoreLottoVigneto:
             "id": self.id,
             "cultivar": self.cultivar,
             "tipologia": self.tipologia,
+            "priorita": self.priorita,
             "input_config": {
                 "concime": self.concime,
                 "trattamento": self.trattamento,
@@ -290,7 +303,10 @@ def main_controller(modalita_input, json_data = None):
     modalita_input: 'manuale' o 'json' per scegliere la fonte dei dati.
     json_data: stringa JSON se modalita_input è 'json'.
     '''
+
     lista_lotti = []
+    # Inizializzo il budget con il valore globale di default (caso manuale)
+    budget_ore_disponibile = ORE_AZIENDALI_TOTALI
 
     # - FASE 1: INIZIALIZZAZIONE -
     # Controllo prioritario: Se c'è un JSON valido (e non è None), uso quello (API mode)
@@ -302,16 +318,23 @@ def main_controller(modalita_input, json_data = None):
 
             # Deserializzazione del payload JSON: trasformo la stringa ricevuta dal frontend in strutture dati manipolabili dal backend Python.
             # Esame: Basi di Dati (INGINF05)
-            dati_list = json.loads(json_data)
+            payload = json.loads(json_data)
+            
+            # Estraggo il budget dal JSON (con fallback se manca)
+            budget_ore_disponibile = float(payload.get('ore_budget', ORE_AZIENDALI_TOTALI))
+            dati_list = payload.get('lotti', [])
 
             for d in dati_list:
-                # Nota: il JSON deve contenere il campo 'tipologia' e i nomi completi nel config
-                nuovo = SimulatoreLottoVigneto(d['id'], d['cultivar'], d['tipologia'], int(d['n_piante']), float(d['ettari']))
-                nuovo.configura_parametri(
-                    float(d['config']['capacita_giornaliera']), float(d['config']['tempo_unitario']),
-                    d['config']['concime'], d['config']['trattamento']
+                Nuovo = SimulatoreLottoVigneto(d['id'], d['cultivar'], d['tipologia'], int(d['n_piante']), float(d['ettari']))
+                Nuovo.configura_parametri(
+                    float(d['config']['capacita_giornaliera']),
+                    float(d['config']['tempo_unitario']),
+                    d['config']['concime'],
+                    d['config']['trattamento'],
+                    d.get('priorita', 2)
                 )
-                lista_lotti.append(nuovo)
+                lista_lotti.append(Nuovo)
+
         except Exception as e:
             # Fallback di sicurezza: se il JSON è corrotto, restituisco errore nel log
             return json.dumps({"error": f"JSON Error: {str(e)}"}), 500
@@ -320,7 +343,13 @@ def main_controller(modalita_input, json_data = None):
         # Modalità Manuale: Uso i dati definiti nella Dashboard in alto
         def crea_lotto_da_config(id_l, conf):
             Lotto = SimulatoreLottoVigneto(id_l, conf["nome"], conf["tipo"], conf["piante"], conf["ettari"])
-            Lotto.configura_parametri(conf["capacita_raccolta"], conf["tempo_lavorazione"], conf["concime"], conf["trattamento"])
+            Lotto.configura_parametri(
+                conf["capacita_raccolta"],
+                conf["tempo_lavorazione"],
+                conf["concime"],
+                conf["trattamento"],
+                conf["priorita"]
+            )
             return Lotto
 
         lista_lotti.append(crea_lotto_da_config("L01", LOTTO_1))
@@ -329,33 +358,77 @@ def main_controller(modalita_input, json_data = None):
 
     # - FASE 2: ESECUZIONE -
     meteo = ottieni_dati_meteo_iot()
-    
     risultati = []
     
-    # Accumulatori per i totali
-    tot_uva, tot_vino, tot_vinaccia, tot_ore, tot_bottiglie = 0, 0, 0, 0, 0 
-
     # Eseguo la logica su ogni oggetto
     for lotto in lista_lotti:   
         res = lotto.esegui_simulazione(meteo)
         risultati.append(res)
+
+    # Ordino per priorità e poi per ID lotto, usando LINQ (ma solo per i calcoli e non per il report)
+    risultati_ordinati = sorted(risultati, key=lambda x: (x.get("priorita", 2), x.get("id", "")))
+
+    ore_residue = budget_ore_disponibile
+
+    for res in risultati_ordinati:
+
+        # Ore richieste per completare il lotto (prima della penalizzazione)
+        #ore_richieste = res["output"]["ore_totali"]
+        ore_richieste = res["output"]["ore_totali"]
+
+        # Salvo ore teoriche complete (necessarie al 100%)
+        res["ore_necessarie_100"] = round(ore_richieste, 2)
+
+        percentuale = 0.0
+        if ore_residue <= 0:
+            percentuale = 0.0
+        elif ore_residue >= ore_richieste:
+            percentuale = 100.0
+            ore_residue -= ore_richieste
+        else:
+            percentuale = (ore_residue / ore_richieste) * 100
+            ore_residue = 0
+
+        # Penalizzazione proporzionale produzione
+        fattore = percentuale / 100.0
+
+        res["output"]["uva_kg"] = round(res["output"]["uva_kg"] * fattore, 2)
+        res["output"]["vino_litri"] = round(res["output"]["vino_litri"] * fattore, 2)
+        res["output"]["vinaccia_kg"] = round(res["output"]["vinaccia_kg"] * fattore, 2)
+        res["output"]["n_bottiglie"] = int(res["output"]["n_bottiglie"] * fattore)
+
+        # Riduco le ore nel dettaglio (ciclo for per evitare errori di arrotondamento multiplo)
+        for k in ["vendemmia", "cantina", "gestione"]:
+            res["output"]["dettaglio_ore"][k] = round(res["output"]["dettaglio_ore"][k] * fattore, 2)
+
+        # Aggiorno il totale ore usato
+        res["output"]["ore_totali"] = round(sum(res["output"]["dettaglio_ore"].values()), 2)
+        res["percentuale_elaborazione"] = round(percentuale, 1)
+
+        # Definisco lo stato testuale
+        if percentuale >= 99.9: res["stato_produzione"] = "Completato"
+        elif percentuale > 0: res["stato_produzione"] = "Parziale"
+        else: res["stato_produzione"] = "Non Avviato"
         
-        # Aggiorno i contatori globali
-        tot_uva += res['output']['uva_kg']
-        tot_vino += res['output']['vino_litri']
-        tot_vinaccia += res['output']['vinaccia_kg']
-        tot_ore += res['output']['ore_totali']
-        tot_bottiglie += res['output']['n_bottiglie'] 
+    # Ricalcolo totali aziendali
+    tot_uva = sum(r['output']['uva_kg'] for r in risultati)
+    tot_vino = sum(r['output']['vino_litri'] for r in risultati)
+    tot_vinaccia = sum(r['output']['vinaccia_kg'] for r in risultati)
+    tot_bottiglie = sum(r['output']['n_bottiglie'] for r in risultati)
+    tot_ore_effettive = sum(r['output']['ore_totali'] for r in risultati)
+    tot_ore_teoriche = sum(r['ore_necessarie_100'] for r in risultati)
 
     # Costruisco il dizionario finale dei dati
     dati_finali = {
         "meteo_rilevato": meteo,
         "dettaglio_lotti": risultati,
         "totali_azienda": {
+            "budget_iniziale": budget_ore_disponibile,
             "totale_uva_kg": round(tot_uva, 2),
             "totale_vino_litri": round(tot_vino, 2),
             "totale_vinaccia_biomassa_kg": round(tot_vinaccia, 2),
-            "totale_ore_lavoro": round(tot_ore, 1),
+            "totale_ore_effettive": round(tot_ore_effettive, 2),
+            "totale_ore_necessarie_100": round(tot_ore_teoriche, 2),
             "totale_bottiglie_1_5L": tot_bottiglie
         }
     }
@@ -364,38 +437,45 @@ def main_controller(modalita_input, json_data = None):
     # Sintetizzo i dati operativi per fornire output decisionali utili alla pianificazione delle risorse aziendali (es. stima bottiglie e ore lavoro).
     # Esami: Strategia, organizzazione e marketing (INGIND35) - Corporate planning e valore d'impresa (SECSP07)
     if modalita_input == 'manuale':
-        print("\n" + "=" * 42)
+        print("\n" + "=" * 45)
         print("📋 REPORT PRODUZIONE TIMPE SMART VINEYARD")
-        print("=" * 42 + "\n")
-        print(f"⛅ TREND METEO STAGIONALE: Pioggia {meteo['pioggia_mm']}mm | Rischio: {meteo['rischio_patogeni']}")
+        print("=" * 45 + "\n")
+        print(f"⛅ Trend meteo stagionale: Pioggia {meteo['pioggia_mm']}mm | Rischio: {meteo['rischio_patogeni']}")
+        print(f"📈 Ore aziendali disponibili: {budget_ore_disponibile} h")
         
         for res in risultati:
+            status_icon = "✅" if res['percentuale_elaborazione'] == 100 else "⚠️" if res['percentuale_elaborazione'] > 0 else "⛔"
+
             # Aggiunto ID Lotto nel titolo e rimesse le Emoji come richiesto
-            print(f"\n🍇 CULTIVAR: {res['cultivar']} ({res['tipologia']}) - ID: {res['id']}")
+            print(f"\n🍇 Cultivar: {res['cultivar']} ({res['tipologia']}) - ID: {res['id']}")
+            print(f" ├─🚩  Priorità:         {res['priorita']}")
             print(f" ├─⚙️  Configurazione:  {res['input_config']['concime']} + {res['input_config']['trattamento']}")
-            print(f" ├─⚖️  Resa Uva:        {res['output']['uva_kg']} Kg")
-            print(f" ├─🍷 Vino Finale:     {res['output']['vino_litri']} Litri")
+            print(f" ├─⚖️  Resa uva:        {res['output']['uva_kg']} Kg")
+            print(f" ├─🍷 Vino ottenuto:   {res['output']['vino_litri']} Litri")
             print(f" ├─🍾 Bottiglie:       {res['output']['n_bottiglie']} Pezzi (1.5L)")
             print(f" ├─♻️  Vinaccia:        {res['output']['vinaccia_kg']} Kg")
+            print(f" ├─📊 Produzione:      {res['percentuale_elaborazione']}% {status_icon} {res['stato_produzione']}")
             print(f" └─⏱️  Tempi lavorazione:")
-            print(f"    ├─── Raccolta:     {res['output']['dettaglio_ore']['vendemmia']} h")
-            print(f"    ├─── Cantina:      {res['output']['dettaglio_ore']['cantina']} h")
-            print(f"    ├─── Gestione:     {res['output']['dettaglio_ore']['gestione']} h")
-            print(f"    └─── Totale:       {res['output']['ore_totali']} h")
-            print("-" * 35)
+            print(f"    ├─── Raccolta:         {res['output']['dettaglio_ore']['vendemmia']} h")
+            print(f"    ├─── Cantina:          {res['output']['dettaglio_ore']['cantina']} h")
+            print(f"    ├─── Gestione:         {res['output']['dettaglio_ore']['gestione']} h")
+            print(f"    ├─── Totale usato:     {res['output']['ore_totali']} h")
+            print(f"    └─── Totale per 100%:  {res['ore_necessarie_100']} h")
+            print("-" * 45)
         
-        print("\n" + "=" * 42)
+        print("\n" + "=" * 45)
         print("📊 RIEPILOGO GENERALE AZIENDA")
-        print("=" * 42)
+        print("=" * 45)
 
         t = dati_finali['totali_azienda']
 
-        print(f"🧺 Totale Uva Raccolta:    {t['totale_uva_kg']} Kg")
-        print(f"🛢️  Totale Vino Prodotto:   {t['totale_vino_litri']} Litri")
-        print(f"♻️  Totale Vinaccia:        {t['totale_vinaccia_biomassa_kg']} Kg")
-        print(f"🍾 Totale Bottiglie:       {t['totale_bottiglie_1_5L']} Pezzi (1.5L)")
-        print(f"🚜 Totale Ore Lavoro:      {t['totale_ore_lavoro']} h")
-        print("=" * 42 + "\n")
+        print(f"🧺 Totale uva raccolta:    {t['totale_uva_kg']} Kg")
+        print(f"🛢️  Totale vino prodotto:   {t['totale_vino_litri']} Litri")
+        print(f"♻️  Totale vinaccia:        {t['totale_vinaccia_biomassa_kg']} Kg")
+        print(f"🍾 Totale bottiglie:       {t['totale_bottiglie_1_5L']} Pezzi (1.5L)")
+        print(f"🚜 Totale ore utilizzate:  {t['totale_ore_effettive']} h")
+        print(f"📈 Totale ore per 100%:    {t['totale_ore_necessarie_100']} h")
+        print("=" * 45 + "\n")
             
     elif modalita_input == 'json':
         return json.dumps(dati_finali, indent = 4)
