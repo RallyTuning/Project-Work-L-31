@@ -19,6 +19,7 @@ In questo progetto ho voluto realizzare una modellazione software della filiera 
 1.  **Gestire 3 Linee di Prodotto:** Barbera, Aglianico e Moscato.
 2.  **Simulare 2 Flussi di Lavorazione:** Vinificazione in Rosso (macerazione) e in Bianco (pressatura soffice).
 3.  **Calcolare Output e Sottoprodotti:** Stima della produzione di vino finito e della biomassa di scarto (Vinaccia) per l'economia circolare.
+4.  **Ottimizzare le Risorse (Scheduling)**: Implementazione di algoritmi per la gestione di priorità e budget limitati (ore uomo), simulando scenari di scarsità delle risorse.
 
 Questo Project Work rappresenta per me il punto di incontro tra la mia esperienza professionale pregressa nel settore IT e i paradigmi teorici approfonditi durante il corso di laurea. Partendo da un background tecnico già consolidato (gestione server, networking e sviluppo desktop/web), ho utilizzato questo progetto per applicare i principi appresi durante il mio percorso universitario, indirizzando le mie competenze pratiche verso una modellazione ingegneristica più rigorosa.
 
@@ -34,6 +35,7 @@ Questo modulo rappresenta il **requisito fondamentale** del Project Work. È uno
 * **Modellazione OOP:** Utilizzo di classi (`SimulatoreLottoVigneto`) per rappresentare ogni appezzamento di terreno come un oggetto con stato e comportamenti.
 * **Simulazione IoT:** Una funzione dedicata genera dati stocastici (meteo, temperatura, rischio patogeni) simulando una rete di sensori in campo.
 * **Logica Condizionale:** Algoritmi che adattano la resa in base a variabili input (concimi, trattamenti fitosanitari, meteo).
+* **Algoritmo di Scheduling:** Implementazione di una logica di ordinamento per priorità per l'allocazione efficiente di un budget ore finito, con calcolo automatico dei tagli produttivi.
 * **Calcolo Tempi:** Stima delle ore-uomo necessarie per le fasi di *Raccolta*, *Trasformazione* e *Gestione Aziendale*.
 
 ---
@@ -49,7 +51,10 @@ All'interno della cartella `Dashboard Web`:
 * **`templates/index.html` (Frontend):** L'interfaccia utente.
     * Permette la configurazione dei parametri (ettari, piante, capacità lavorativa).
     * Visualizza i risultati tramite grafici animati (**Chart.js**) per un'analisi immediata dei KPI.
+    * Analisi dell'efficienza produttiva.
+    * Gap Analysis sui tempi di lavorazione (Ore Effettive vs Ore Mancanti).
     * Comunica con il backend tramite chiamate asincrone (Fetch API).
+
 
 ⭐️ La Dashboard è accessibile pubblicamente dal mio dominio: https://projectwork.capozzoli.me
 
