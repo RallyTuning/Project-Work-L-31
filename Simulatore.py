@@ -59,7 +59,7 @@ JSON_SIMULATO_DAL_WEB = None
 # --------------------------------------------------------------------------------------
 
 # Budget totale delle ore manodopera disponibili per l'intera azienda
-ORE_AZIENDALI_TOTALI = 100.0
+ORE_AZIENDALI_TOTALI = 200.0
 
 # Configurazione lotto 1: Barbera (vino rosso - flusso A)
 LOTTO_1 = {
