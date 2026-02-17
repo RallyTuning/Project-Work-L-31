@@ -16,10 +16,10 @@
 ## 🎯 Obiettivo del Progetto Work
 
 In questo progetto ho voluto realizzare una modellazione software della filiera produttiva agroalimentare in un ottica di Agricoltura 4.0, concentrandomi sul settore vitivinicolo (basandomi su mia epserienza personale) ed ho progettato il Simulatore Digitale (Digital Twin) con lo scopo di:
-1.  **Gestire 3 Linee di Prodotto:** Barbera, Aglianico e Moscato.
-2.  **Simulare 2 Flussi di Lavorazione:** Vinificazione in Rosso (macerazione) e in Bianco (pressatura soffice).
-3.  **Calcolare Output e Sottoprodotti:** Stima della produzione di vino finito e della biomassa di scarto (Vinaccia) per l'economia circolare.
-4.  **Ottimizzare le Risorse (Scheduling)**: Implementazione di algoritmi per la gestione di priorità e budget limitati (ore uomo), simulando scenari di scarsità delle risorse.
+1.  **Gestire 3 linee di prodotto:** Barbera, Aglianico e Moscato.
+2.  **Simulare 2 flussi di lavorazione:** vinificazione in rosso (macerazione) e in bianco (pressatura soffice).
+3.  **Calcolare output e sottoprodotti:** stima della produzione di vino finito e della biomassa di scarto (Vinaccia) per l'economia circolare.
+4.  **Ottimizzare le risorse (Scheduling)**: implementazione di algoritmi per la gestione di priorità e budget limitati (ore uomo), simulando scenari di scarsità delle risorse.
 
 Questo Project Work rappresenta per me il punto di incontro tra la mia esperienza professionale pregressa nel settore IT e i paradigmi teorici approfonditi durante il corso di laurea. Partendo da un background tecnico già consolidato (gestione server, networking e sviluppo desktop/web), ho utilizzato questo progetto per applicare i principi appresi durante il mio percorso universitario, indirizzando le mie competenze pratiche verso una modellazione ingegneristica più rigorosa.
 
@@ -27,20 +27,20 @@ Gli studi accademici mi hanno fornito gli strumenti matematici e metodologici ne
 
 ---
 
-## ⚙️ Il Cuore del Sistema: `Simulatore.py`
+## ⚙️ Il Cuore del sistema: `Simulatore.py`
 
 Questo modulo rappresenta il **requisito fondamentale** del Project Work. È uno script Python puro che modella la logica di business dell'azienda vitivinicola.
 
 ### Caratteristiche Tecniche:
-* **Modellazione OOP:** Utilizzo di classi (`SimulatoreLottoVigneto`) per rappresentare ogni appezzamento di terreno come un oggetto con stato e comportamenti.
-* **Simulazione IoT:** Una funzione dedicata genera dati stocastici (meteo, temperatura, rischio patogeni) simulando una rete di sensori in campo.
-* **Logica Condizionale:** Algoritmi che adattano la resa in base a variabili input (concimi, trattamenti fitosanitari, meteo).
-* **Algoritmo di Scheduling:** Implementazione di una logica di ordinamento per priorità per l'allocazione efficiente di un budget ore finito, con calcolo automatico dei tagli produttivi.
-* **Calcolo Tempi:** Stima delle ore-uomo necessarie per le fasi di *Raccolta*, *Trasformazione* e *Gestione Aziendale*.
+* **Modellazione OOP:** utilizzo di classi (`SimulatoreLottoVigneto`) per rappresentare ogni appezzamento di terreno come un oggetto con stato e comportamenti.
+* **Simulazione IoT:** una funzione dedicata genera dati stocastici (meteo, temperatura, rischio patogeni) simulando una rete di sensori in campo.
+* **Logica condizionale:** algoritmi che adattano la resa in base a variabili input (concimi, trattamenti fitosanitari, meteo).
+* **Algoritmo di scheduling:** implementazione di una logica di ordinamento per priorità per l'allocazione efficiente di un budget ore finito, con calcolo automatico dei tagli produttivi.
+* **Calcolo tempi:** stima delle ore-uomo necessarie per le fasi di *Raccolta*, *Trasformazione* e *Gestione Aziendale*.
 
 ---
 
-## 💻 Dashboard Web & Frontend (Extra)
+## 💻 Dashboard web & frontend (Extra)
 
 *Questa sezione rappresenta un'implementazione aggiuntiva sviluppata volontariamente per fornire un'interfaccia grafica (GUI) al simulatore.*
 
@@ -60,24 +60,24 @@ All'interno della cartella `Dashboard Web`:
 
 ---
 
-## 🌐 Infrastruttura di Rete e Deployment
+## 🌐 Infrastruttura di rete e deployment
 
 Il progetto non è stato concepito solo per l'esecuzione locale (o debug), ma è stato deployato anche su un'infrastruttura server reale e personale *(la utilizzo già per altri progetti lavorativi e hobbistici)*.
 
 ### Setup "On-Premise":
 * **Host:** Server fisico Windows.
 * **Virtualizzazione:** Esecuzione isolata tramite Python Virtual Environment (`venv`) per la gestione delle dipendenze.
-* **Gestione IP Dinamico (DDNS Custom):**
+* **Gestione IP dinamico (DDNS custom):**
     * Poiché la connettività del server si basa su un IP pubblico dinamico, ho sviluppato uno **script di automazione** lato server *(pre-sviluppato per i miei progetti)*.
-    * Lo script monitora l'IP e interagisce direttamente con le **API del mio provider Hosting** per aggiornare in tempo reale il **Record DNS di tipo "A"**, garantendo la continua raggiungibilità del dominio.
-* **Sicurezza e Accesso Esterno:**
+    * Lo script monitora l'IP e interagisce direttamente con le **API del mio provider Hosting** per aggiornare in tempo reale il **record DNS di tipo "A"**, garantendo la continua raggiungibilità del dominio.
+* **Sicurezza e accesso esterno:**
     * Utilizzo di **Zoraxy** come Reverse Proxy per filtrare il traffico.
-    * Configurazione di **Certificati SSL** per garantire connessioni cifrate (HTTPS).
+    * Configurazione di **certificati SSL** per garantire connessioni cifrate (HTTPS).
     * Gestione del routing dal dominio pubblico alla porta locale del servizio Flask.
 
 ---
 
-## 📸 Anteprima Dashboard
+## 📸 Anteprima dashboard
 
 La dashboard offre un controllo completo sui 3 lotti principali dell'azienda:
 1.  **Lotto 1:** Barbera (Rosso)
@@ -104,7 +104,7 @@ La dashboard offre un controllo completo sui 3 lotti principali dell'azienda:
 
 ---
 
-## 📦 Download Release (Production Ready)
+## 📦 Download release
 
 Per implementare il progetto in ambiente di produzione senza dover configurare manualmente l'ambiente Python, è disponibile il pacchetto **"Full Deployment"** nella sezione **[Releases](../../releases)** di questa repository.
 
