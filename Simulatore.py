@@ -373,7 +373,6 @@ def main_controller(modalita_input, json_data = None):
     for res in risultati_ordinati:
 
         # Ore richieste per completare il lotto (prima della penalizzazione)
-        #ore_richieste = res["output"]["ore_totali"]
         ore_richieste = res["output"]["ore_totali"]
 
         # Salvo ore teoriche complete (necessarie al 100%)
