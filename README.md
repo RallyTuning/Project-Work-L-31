@@ -66,6 +66,20 @@ All'interno della cartella `Dashboard Web`:
 
 ---
 
+## 📸 Anteprima dashboard
+
+La dashboard offre un controllo completo sui 3 lotti principali dell'azienda:
+1.  **Lotto 1:** Barbera (Rosso)
+2.  **Lotto 2:** Aglianico (Rosso Tardivo)
+3.  **Lotto 3:** Moscato (Bianco)
+
+*Grafici dinamici mostrano in tempo reale:*
+* Produzione in Kg/Litri.
+* Percentuali di scarto e biomassa.
+* Tempi di lavorazione di tutte le fasi.
+
+---
+
 ## 🌐 Infrastruttura di rete e deployment
 
 Il progetto non è stato concepito solo per l'esecuzione locale (o debug), ma è stato deployato anche su un'infrastruttura server reale e personale *(la utilizzo già per altri progetti lavorativi e hobbistici)*.
@@ -80,20 +94,6 @@ Il progetto non è stato concepito solo per l'esecuzione locale (o debug), ma è
     * Utilizzo di **Zoraxy** come Reverse Proxy per filtrare il traffico.
     * Configurazione di **certificati SSL** per garantire connessioni cifrate (HTTPS).
     * Gestione del routing dal dominio pubblico alla porta locale del servizio Flask.
-
----
-
-## 📸 Anteprima dashboard
-
-La dashboard offre un controllo completo sui 3 lotti principali dell'azienda:
-1.  **Lotto 1:** Barbera (Rosso)
-2.  **Lotto 2:** Aglianico (Rosso Tardivo)
-3.  **Lotto 3:** Moscato (Bianco)
-
-*Grafici dinamici mostrano in tempo reale:*
-* Produzione in Kg/Litri.
-* Percentuali di scarto e biomassa.
-* Tempi di lavorazione di tutte le fasi.
 
 ---
 
