@@ -58,6 +58,12 @@ All'interno della cartella `Dashboard Web`:
 
 ⭐️ La Dashboard è accessibile pubblicamente dal mio dominio: https://projectwork.capozzoli.me
 
+<details><summary>🖼️ Clicca qui per visualizzare uno screenshot</summary>
+   <div align="center">
+      <img width="540" height="1000" alt="Screenshot della Dashboard" src="https://github.com/user-attachments/assets/cfe35fd5-f425-4fe2-a97d-b438b400faf3" />
+   </div>
+</details>
+
 ---
 
 ## 🌐 Infrastruttura di rete e deployment
