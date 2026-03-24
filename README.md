@@ -1,6 +1,6 @@
 <div align="center">
 
-   # 🍇 Timpe Smart Vineyard - Digital Twin Project
+   # 🍇 Timpe Smart Vineyard
    
    ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
    ![Flask](https://img.shields.io/badge/Backend-Flask-37ab63?style=for-the-badge&logo=flask&logoColor=white)
@@ -15,7 +15,7 @@
 
 ## 🎯 Obiettivo del Progetto Work
 
-In questo progetto ho voluto realizzare una modellazione software della filiera produttiva agroalimentare in un ottica di Agricoltura 4.0, concentrandomi sul settore vitivinicolo (basandomi su mia epserienza personale) ed ho progettato il Simulatore Digitale (Digital Twin) con lo scopo di:
+In questo progetto ho voluto realizzare una modellazione software della filiera produttiva agroalimentare in un ottica di Agricoltura 4.0, concentrandomi sul settore vitivinicolo (basandomi su mia epserienza personale) ed ho progettato una fusione tra un Simulatore Digitale (Digital Twin) e un Decision Support System (DSS) con lo scopo di:
 1.  **Gestire 3 linee di prodotto:** Barbera, Aglianico e Moscato.
 2.  **Simulare 2 flussi di lavorazione:** vinificazione in rosso (macerazione) e in bianco (pressatura soffice).
 3.  **Calcolare output e sottoprodotti:** stima della produzione di vino finito e della biomassa di scarto (Vinaccia) per l'economia circolare.
